@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: v1-create-user-role-table-changelog.yml
+      relativeToChangelogFile: true
+  - include:
+      file: v1-fill-user-role-table-changelog.yml
+      relativeToChangelogFile: true

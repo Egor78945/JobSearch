@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: v2-2
+      author: egor78396@gmail.com
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: user_status
+        - sqlCheck:
+            expectedResult: "0"
+            sql: "SELECT COUNT(*) from user_status"
+      changes:
+        - loadData:
+            tableName: user_status
+            file: db/migration/user_status_table.csv
+            separator: ","
+            usePreparedStatements: true
+            columns:
+              - column:
+                  name: name
+                  type: varchar(100)
