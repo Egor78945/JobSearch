@@ -1,7 +1,9 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '4.0.1'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version "$springBootVersion"
+    id 'io.spring.dependency-management' version "$springDependencyManagementVersion"
+    id 'com.google.protobuf' version "$protobufVersion"
+    id 'nu.studer.jooq' version "$nuStuderJooqVersion"
 }
 
 group = 'com.example'
@@ -10,7 +12,7 @@ description = 'database-manager'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(javaVersion)
     }
 }
 
@@ -21,12 +23,108 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-jooq'
     implementation 'org.springframework.boot:spring-boot-starter-liquibase'
+    implementation "net.devh:grpc-server-spring-boot-starter:$grpcServerSpringBootStarterVersion"
+    implementation "com.google.protobuf:protobuf-java:$protobufJavaVersion"
+    implementation "com.google.guava:guava:$guavaVersion"
+    implementation "javax.annotation:javax.annotation-api:$javaxAnnotationApiVersion"
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation 'org.springframework.boot:spring-boot-starter-jooq-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-liquibase-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:$protocVersion"
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:$protocGenGrpcJavaVersion"
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.plugins {
+                grpc {}
+            }
+        }
+    }
+}
+
+jooq {
+    edition = nu.studer.gradle.jooq.JooqEdition.OSS
+
+    configurations {
+        main {
+            generateSchemaSourceOnCompilation = true
+
+            generationTool {
+                jdbc {
+                    driver = 'org.postgresql.Driver'
+                    url = "jdbc:postgresql://${System.getenv('POSTGRES_HOST')}:${System.getenv('POSTGRES_PORT_INNER')}/${System.getenv('POSTGRES_DATABASE_USER_NAME')}"
+                    user = "${System.getenv('POSTGRES_USERNAME')}"
+                    password = "${System.getenv('POSTGRES_PASSWORD')}"
+                    properties {
+                        property {
+                            key = 'ssl'
+                            value = 'false'
+                        }
+                    }
+                }
+                generator {
+                    name = 'org.jooq.codegen.DefaultGenerator'
+                    database {
+                        name = 'org.jooq.meta.postgres.PostgresDatabase'
+                        inputSchema = 'public'
+                        forcedTypes {
+                            forcedType {
+                                name = 'varchar'
+                                includeExpression = '.*'
+                                includeTypes = 'JSONB?'
+                            }
+                            forcedType {
+                                name = 'varchar'
+                                includeExpression = '.*'
+                                includeTypes = 'INET'
+                            }
+                        }
+                    }
+                    generate {
+                        deprecated = false
+                        records = true
+                        immutablePojos = true
+                        fluentSetters = true
+                    }
+                    target {
+                        packageName = 'nu.studer.sample'
+                        directory = 'build/generated-src/jooq/main'
+                    }
+                    strategy.name = 'org.jooq.codegen.DefaultGeneratorStrategy'
+                }
+            }
+        }
+    }
+}
+
+tasks.register('update', JavaExec) {
+    mainClass = "liquibase.integration.commandline.Main"
+    classpath = sourceSets.main.runtimeClasspath
+    args = [
+            "--changeLogFile=src/main/resources/db/changelog/main/main-changelog.yml",
+            "--url=jdbc:postgresql://${System.getenv('POSTGRES_HOST')}:${System.getenv('POSTGRES_PORT_INNER')}/${System.getenv('POSTGRES_DATABASE_USER_NAME')}",
+            "--username=${System.getenv('POSTGRES_USERNAME')}",
+            "--password=${System.getenv('POSTGRES_PASSWORD')}",
+            "update"
+    ]
+}
+
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+tasks.named('generateJooq').configure {
+    allInputsDeclared = false
+    launcher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(javaVersion)
+    }
 }
