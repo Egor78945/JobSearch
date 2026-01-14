@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UserRepository<U> extends EntityRepository<U> {
-    U updateByEmail(String email);
+    U updateByEmail(U user);
     Optional<U> findById(Long id);
     Optional<U> findByEmail(String email);
     Optional<U> findByUuid(UUID uuid);

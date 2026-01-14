@@ -1,6 +1,8 @@
 package com.example.database_manager.repository.user.common;
 
+import com.example.database_manager.exception.FailedOperationException;
 import com.example.database_manager.repository.jooq.JooqRepository;
+import nu.studer.sample.Tables;
 import org.jooq.DSLContext;
 
 import java.util.UUID;
@@ -12,16 +14,51 @@ public abstract class JooqCommonUserRepository extends JooqRepository implements
 
     @Override
     public boolean existsById(Long id) {
-        return false;
+        return dslContext
+                .fetchExists(
+                        dslContext
+                                .selectOne()
+                                .from(Tables.USERS)
+                                .where(Tables.USERS.ID.eq(id))
+                );
     }
 
     @Override
     public boolean existsByEmail(String email) {
-        return false;
+        return dslContext
+                .fetchExists(
+                        dslContext
+                                .selectOne()
+                                .from(Tables.USERS)
+                                .where(Tables.USERS.EMAIL.eq(email))
+                );
     }
 
     @Override
     public boolean existsByUuid(UUID uuid) {
-        return false;
+        return dslContext
+                .fetchExists(
+                        dslContext
+                                .selectOne()
+                                .from(Tables.USERS)
+                                .where(Tables.USERS.UUID.eq(uuid))
+                );
+    }
+
+    @Override
+    public UUID getUnbusyUuid() {
+        UUID uuid = UUID.randomUUID();
+        for (int i = 0; i < 10; i++) {
+            if(existsByUuid(uuid)) {
+                uuid = UUID.randomUUID();
+            } else {
+                return uuid;
+            }
+        }
+
+        if (existsByUuid(uuid)) {
+            throw new FailedOperationException("failed to generate unbusy uuid");
+        }
+        return uuid;
     }
 }
