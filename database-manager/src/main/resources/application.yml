@@ -1,3 +1,6 @@
 spring:
   application:
     name: database-manager
+
+  datasource:
+    driver-class-name: org.postgresql.Driver

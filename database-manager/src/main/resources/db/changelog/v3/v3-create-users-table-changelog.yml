@@ -36,6 +36,7 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     nullable: false
+                    foreignKeyName: users_status_fk
                     referencedTableName: user_status
                     referencedColumnNames: id
               - column:

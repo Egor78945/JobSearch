@@ -28,6 +28,7 @@ dependencies {
     implementation "com.google.guava:guava:$guavaVersion"
     implementation "javax.annotation:javax.annotation-api:$javaxAnnotationApiVersion"
     runtimeOnly 'org.postgresql:postgresql'
+    jooqGenerator 'org.postgresql:postgresql'
     testImplementation 'org.springframework.boot:spring-boot-starter-jooq-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-liquibase-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -61,9 +62,9 @@ jooq {
             generationTool {
                 jdbc {
                     driver = 'org.postgresql.Driver'
-                    url = "jdbc:postgresql://${System.getenv('POSTGRES_HOST')}:${System.getenv('POSTGRES_PORT_INNER')}/${System.getenv('POSTGRES_DATABASE_USER_NAME')}"
-                    user = "${System.getenv('POSTGRES_USERNAME')}"
-                    password = "${System.getenv('POSTGRES_PASSWORD')}"
+                    url = "jdbc:postgresql://${System.getenv("POSTGRES_HOST")}:${System.getenv("POSTGRES_PORT_INNER")}/${System.getenv("POSTGRES_DB")}"
+                    user = "${System.getenv("POSTGRES_USER")}"
+                    password = "${System.getenv("POSTGRES_PASSWORD")}"
                     properties {
                         property {
                             key = 'ssl'
@@ -111,9 +112,9 @@ tasks.register('update', JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     args = [
             "--changeLogFile=src/main/resources/db/changelog/main/main-changelog.yml",
-            "--url=jdbc:postgresql://${System.getenv('POSTGRES_HOST')}:${System.getenv('POSTGRES_PORT_INNER')}/${System.getenv('POSTGRES_DATABASE_USER_NAME')}",
-            "--username=${System.getenv('POSTGRES_USERNAME')}",
-            "--password=${System.getenv('POSTGRES_PASSWORD')}",
+            "--url=jdbc:postgresql://${System.getenv("POSTGRES_HOST")}:${System.getenv("POSTGRES_PORT_INNER")}/${System.getenv("POSTGRES_DB")}",
+            "--username=${System.getenv("POSTGRES_USER")}",
+            "--password=${System.getenv("POSTGRES_PASSWORD")}",
             "update"
     ]
 }

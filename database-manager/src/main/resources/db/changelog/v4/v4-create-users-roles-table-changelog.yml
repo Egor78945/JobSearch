@@ -16,6 +16,7 @@ databaseChangeLog:
                   type: uuid
                   constraints:
                     nullable: false
+                    foreignKeyName: roles_users_fk
                     referencedTableName: users
                     referencedColumnNames: uuid
               - column:
@@ -23,5 +24,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     nullable: false
+                    foreignKeyName: roles_role_fk
                     referencedTableName: user_role
                     referencedColumnNames: id
