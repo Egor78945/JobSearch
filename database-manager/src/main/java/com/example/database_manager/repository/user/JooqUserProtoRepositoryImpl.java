@@ -15,10 +15,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public class JooqUserProtoRepository extends JooqRepository implements UserRepository<UserProtoConfiguration.UserMessage> {
+public class JooqUserProtoRepositoryImpl extends JooqRepository implements UserRepository<UserProtoConfiguration.UserMessage> {
     protected final CommonUserRepository commonUserRepository;
 
-    public JooqUserProtoRepository(DSLContext dslContext, CommonUserRepository commonUserRepository) {
+    public JooqUserProtoRepositoryImpl(DSLContext dslContext, CommonUserRepository commonUserRepository) {
         super(dslContext);
         this.commonUserRepository = commonUserRepository;
     }

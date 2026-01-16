@@ -62,9 +62,9 @@ jooq {
             generationTool {
                 jdbc {
                     driver = 'org.postgresql.Driver'
-                    url = "jdbc:postgresql://${System.getenv("POSTGRES_HOST")}:${System.getenv("POSTGRES_PORT_INNER")}/${System.getenv("POSTGRES_DB")}"
-                    user = "${System.getenv("POSTGRES_USER")}"
-                    password = "${System.getenv("POSTGRES_PASSWORD")}"
+                    url = "jdbc:postgresql://localhost:5433/test"
+                    user = "test"
+                    password = "test"
                     properties {
                         property {
                             key = 'ssl'
@@ -112,9 +112,9 @@ tasks.register('update', JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     args = [
             "--changeLogFile=src/main/resources/db/changelog/main/main-changelog.yml",
-            "--url=jdbc:postgresql://${System.getenv("POSTGRES_HOST")}:${System.getenv("POSTGRES_PORT_INNER")}/${System.getenv("POSTGRES_DB")}",
-            "--username=${System.getenv("POSTGRES_USER")}",
-            "--password=${System.getenv("POSTGRES_PASSWORD")}",
+            "--url=jdbc:postgresql://localhost:5433/test",
+            "--username=test",
+            "--password=test",
             "update"
     ]
 }

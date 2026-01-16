@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: v5-create-users-statuses-table-changelog.yml
+      relativeToChangelogFile: true
