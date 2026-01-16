@@ -28,7 +28,7 @@ dependencies {
     implementation "com.google.guava:guava:$guavaVersion"
     implementation "javax.annotation:javax.annotation-api:$javaxAnnotationApiVersion"
     runtimeOnly 'org.postgresql:postgresql'
-    jooqGenerator 'org.postgresql:postgresql'
+    jooqGenerator "org.postgresql:postgresql:$jooqGeneratorVersion"
     testImplementation 'org.springframework.boot:spring-boot-starter-jooq-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-liquibase-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

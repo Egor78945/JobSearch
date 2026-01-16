@@ -9,6 +9,11 @@ message UserMessage {
   int64 registeredAt = 5;
 }
 
+message UserRegistrationMessage {
+  UserMessage userMessage = 1;
+  repeated LongStringMessage usersRolesMessage = 2;
+}
+
 message LongStringMessage {
   int64 long = 1;
   string string = 2;
