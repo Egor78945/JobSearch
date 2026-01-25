@@ -23,6 +23,21 @@ services:
     ports:
       - ${POSTGRES_PORT_OUTER}:${POSTGRES_PORT_INNER}
 
+  service-discovery:
+    container_name: service-discovery
+    build:
+      context: ../service-discovery
+      dockerfile: Dockerfile
+      args:
+        JAVA_VERSION: ${JAVA_VERSION}
+    networks:
+      - service
+    env_file:
+      - .env
+    restart: no
+    ports:
+      - ${SERVICE_DISCOVERY_PORT_OUTER}:${SERVICE_DISCOVERY_PORT_INNER}
+
   database-manager:
     container_name: database-manager
     networks:
