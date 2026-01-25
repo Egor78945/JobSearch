@@ -1,5 +1,6 @@
 package com.example.database_manager.controller.grpc;
 
+import com.example.database_manager.exception.ServiceException;
 import com.example.database_manager.service.user.UserService;
 import com.proto.user.UserProtoConfiguration;
 import com.proto.user.UserProtoServiceGrpc;
@@ -18,19 +19,31 @@ public class GrpcUserController extends UserProtoServiceGrpc.UserProtoServiceImp
 
     @Override
     public void findById(UserProtoConfiguration.LongMessage request, StreamObserver<UserProtoConfiguration.UserMessage> responseObserver) {
-        responseObserver.onNext(userService.findById(request.getLong()));
-        responseObserver.onCompleted();
+        try {
+            responseObserver.onNext(userService.findById(request.getLong()));
+            responseObserver.onCompleted();
+        } catch (ServiceException e) {
+            responseObserver.onError(e);
+        }
     }
 
     @Override
     public void findByUuid(UserProtoConfiguration.StringMessage request, StreamObserver<UserProtoConfiguration.UserMessage> responseObserver) {
-        responseObserver.onNext(userService.findByUuid(UUID.fromString(request.getString())));
-        responseObserver.onCompleted();
+        try {
+            responseObserver.onNext(userService.findByUuid(UUID.fromString(request.getString())));
+            responseObserver.onCompleted();
+        } catch (ServiceException e) {
+            responseObserver.onError(e);
+        }
     }
 
     @Override
     public void findByEmail(UserProtoConfiguration.StringMessage request, StreamObserver<UserProtoConfiguration.UserMessage> responseObserver) {
-        responseObserver.onNext(userService.findByEmail(request.getString()));
-        responseObserver.onCompleted();
+        try {
+            responseObserver.onNext(userService.findByEmail(request.getString()));
+            responseObserver.onCompleted();
+        } catch (ServiceException e) {
+            responseObserver.onError(e);
+        }
     }
 }
