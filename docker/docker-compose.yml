@@ -35,5 +35,3 @@ services:
     restart: no
     env_file:
       - path: .env
-    ports:
-      - "9090:9090"
