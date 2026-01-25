@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: database-manager
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT_INNER}/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+
+  liquibase:
+    change-log: db/changelog/main/main-changelog.yml
+    enabled: true
+
+grpc:
+  server:
+    port: ${DATABASE_MANAGER_PORT_GRPC}

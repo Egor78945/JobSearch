@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: v4-1
+      author: egor78396@gmail.com
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: users_roles
+      changes:
+        - createTable:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: user_uuid
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: roles_users_fk
+                    referencedTableName: users
+                    referencedColumnNames: uuid
+              - column:
+                  name: role_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: roles_role_fk
+                    referencedTableName: user_role
+                    referencedColumnNames: id

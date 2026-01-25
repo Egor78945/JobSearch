@@ -1,0 +1,41 @@
+syntax="proto3";
+package com.proto.user;
+
+message UserMessage {
+  int64 id = 1;
+  string uuid = 2;
+  string email = 3;
+  int64 userStatusId = 4;
+  int64 registeredAt = 5;
+}
+
+message UserRegistrationMessage {
+  UserMessage userMessage = 1;
+  repeated int64 usersRolesMessage = 2;
+}
+
+message LongStringMessage {
+  int64 long = 1;
+  string string = 2;
+}
+
+message StringMessage {
+  string string = 1;
+}
+
+message LongMessage {
+  int64 long = 1;
+}
+
+message EmptyMessage{
+}
+
+service UserProtoAuthenticationService {
+  rpc register(UserRegistrationMessage) returns (UserRegistrationMessage);
+}
+
+service UserProtoService {
+  rpc findById(LongMessage) returns (UserMessage);
+  rpc findByUuid(StringMessage) returns (UserMessage);
+  rpc findByEmail(StringMessage) returns (UserMessage);
+}
