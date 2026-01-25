@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: api-gateway
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${SERVICE_DISCOVERY_HOST}:${SERVICE_DISCOVERY_PORT_INNER}/eureka
+    register-with-eureka: true
+    fetch-registry: true
+
+server:
+  port: ${API_GATEWAY_PORT_INNER}
