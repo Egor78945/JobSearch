@@ -11,7 +11,7 @@ message UserMessage {
 
 message UserRegistrationMessage {
   UserMessage userMessage = 1;
-  repeated LongStringMessage usersRolesMessage = 2;
+  repeated int64 usersRolesMessage = 2;
 }
 
 message LongStringMessage {
@@ -31,7 +31,7 @@ message EmptyMessage{
 }
 
 service UserProtoAuthenticationService {
-  rpc register(UserMessage) returns (UserMessage);
+  rpc register(UserRegistrationMessage) returns (UserRegistrationMessage);
 }
 
 service UserProtoService {

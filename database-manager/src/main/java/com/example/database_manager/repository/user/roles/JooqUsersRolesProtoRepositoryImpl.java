@@ -1,7 +1,7 @@
 package com.example.database_manager.repository.user.roles;
 
 import com.example.database_manager.repository.jooq.JooqRepository;
-import com.example.database_manager.util.mapper.UserRoleMapper;
+import com.example.database_manager.util.mapper.UsersRolesMapper;
 import com.proto.user.UserProtoConfiguration;
 import nu.studer.sample.Tables;
 import org.jooq.DSLContext;
@@ -22,8 +22,8 @@ public class JooqUsersRolesProtoRepositoryImpl extends JooqRepository implements
                 .insertInto(Tables.USERS_ROLES)
                 .set(Tables.USERS_ROLES.ROLE_ID, entity.getLong())
                 .set(Tables.USERS_ROLES.USER_UUID, UUID.fromString(entity.getString()))
-                .returning(Tables.USERS_ROLES)
-                .fetchOne(UserRoleMapper::mapTo);
+                .returningResult(Tables.USERS_ROLES)
+                .fetchOne(r -> UsersRolesMapper.mapTo(r.component1()));
     }
 
     @Override
@@ -31,6 +31,6 @@ public class JooqUsersRolesProtoRepositoryImpl extends JooqRepository implements
         return dslContext
                 .selectFrom(Tables.USERS_ROLES)
                 .where(Tables.USERS_ROLES.USER_UUID.eq(uuid))
-                .fetch(UserRoleMapper::mapTo);
+                .fetch(UsersRolesMapper::mapTo);
     }
 }

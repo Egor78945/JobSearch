@@ -7,3 +7,11 @@ spring:
     url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT_INNER}/${POSTGRES_DB}
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
+
+  liquibase:
+    change-log: db/changelog/main/main-changelog.yml
+    enabled: true
+
+grpc:
+  server:
+    port: ${DATABASE_MANAGER_PORT_GRPC}

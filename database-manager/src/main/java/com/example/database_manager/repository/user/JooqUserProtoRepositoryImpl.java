@@ -2,7 +2,7 @@ package com.example.database_manager.repository.user;
 
 import com.example.database_manager.repository.jooq.JooqRepository;
 import com.example.database_manager.repository.user.common.CommonUserRepository;
-import com.example.database_manager.util.mapper.UserMapper;
+import com.example.database_manager.util.mapper.UsersMapper;
 import com.proto.user.UserProtoConfiguration;
 import nu.studer.sample.Tables;
 import org.jooq.DSLContext;
@@ -31,8 +31,8 @@ public class JooqUserProtoRepositoryImpl extends JooqRepository implements UserR
                 .set(Tables.USERS.EMAIL, entity.getEmail())
                 .set(Tables.USERS.USER_STATUS_ID, entity.getUserStatusId())
                 .set(Tables.USERS.REGISTERED_AT, LocalDateTime.ofInstant(Instant.ofEpochMilli(entity.getRegisteredAt()), ZoneId.systemDefault()))
-                .returning(Tables.USERS)
-                .fetchOne(UserMapper::mapTo);
+                .returningResult(Tables.USERS)
+                .fetchOne(r -> UsersMapper.mapTo(r.component1()));
     }
 
     @Override
@@ -45,8 +45,8 @@ public class JooqUserProtoRepositoryImpl extends JooqRepository implements UserR
                 .set(Tables.USERS.USER_STATUS_ID, entity.getUserStatusId())
                 .set(Tables.USERS.REGISTERED_AT, LocalDateTime.ofInstant(Instant.ofEpochMilli(entity.getRegisteredAt()), ZoneId.systemDefault()))
                 .where(Tables.USERS.EMAIL.eq(entity.getEmail()))
-                .returning(Tables.USERS)
-                .fetchOne(UserMapper::mapTo);
+                .returningResult(Tables.USERS)
+                .fetchOne(r -> UsersMapper.mapTo(r.component1()));
     }
 
     @Override
@@ -54,7 +54,7 @@ public class JooqUserProtoRepositoryImpl extends JooqRepository implements UserR
         return dslContext
                 .selectFrom(Tables.USERS)
                 .where(Tables.USERS.ID.eq(id))
-                .fetchOptional(UserMapper::mapTo);
+                .fetchOptional(UsersMapper::mapTo);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class JooqUserProtoRepositoryImpl extends JooqRepository implements UserR
         return dslContext
                 .selectFrom(Tables.USERS)
                 .where(Tables.USERS.UUID.eq(uuid))
-                .fetchOptional(UserMapper::mapTo);
+                .fetchOptional(UsersMapper::mapTo);
     }
 
     @Override
@@ -70,6 +70,6 @@ public class JooqUserProtoRepositoryImpl extends JooqRepository implements UserR
         return dslContext
                 .selectFrom(Tables.USERS)
                 .where(Tables.USERS.EMAIL.eq(email))
-                .fetchOptional(UserMapper::mapTo);
+                .fetchOptional(UsersMapper::mapTo);
     }
 }

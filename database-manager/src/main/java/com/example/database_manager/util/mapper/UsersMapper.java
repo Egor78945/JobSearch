@@ -5,7 +5,7 @@ import nu.studer.sample.tables.records.UsersRecord;
 
 import java.time.ZoneId;
 
-public class UserMapper {
+public class UsersMapper {
     public static UserProtoConfiguration.UserMessage mapTo(UsersRecord user) {
         return UserProtoConfiguration.UserMessage
                 .newBuilder()

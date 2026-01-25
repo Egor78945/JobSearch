@@ -3,11 +3,9 @@ package com.example.database_manager.service.user.registration;
 import com.example.database_manager.service.RegistrationService;
 import com.example.database_manager.service.user.UserService;
 import com.example.database_manager.service.user.roles.UsersRolesService;
+import com.example.database_manager.util.mapper.UsersRolesMapper;
 import com.proto.user.UserProtoConfiguration;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class UserRegistrationProtoServiceImpl implements RegistrationService<UserProtoConfiguration.UserRegistrationMessage> {
@@ -22,14 +20,13 @@ public class UserRegistrationProtoServiceImpl implements RegistrationService<Use
     @Override
     public UserProtoConfiguration.UserRegistrationMessage register(UserProtoConfiguration.UserRegistrationMessage entity) {
         UserProtoConfiguration.UserMessage registered = userService.save(entity.getUserMessage());
-        List<UserProtoConfiguration.LongStringMessage> savedRolesList = new ArrayList<>();
-        for(UserProtoConfiguration.LongStringMessage userRoleMessage: entity.getUsersRolesMessageList()) {
-            savedRolesList.add(usersRolesService.save(userRoleMessage));
+
+        for(long usersRoleId: entity.getUsersRolesMessageList()) {
+            usersRolesService.save(UsersRolesMapper.mapTo(usersRoleId, registered.getUuid()));
         }
 
         return entity.toBuilder()
                 .setUserMessage(registered)
-                .addAllUsersRolesMessage(savedRolesList)
                 .build();
     }
 }

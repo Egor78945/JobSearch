@@ -22,3 +22,18 @@ services:
       - path: .env
     ports:
       - ${POSTGRES_PORT_OUTER}:${POSTGRES_PORT_INNER}
+
+  database-manager:
+    container_name: database-manager
+    networks:
+      - service
+    build:
+      context: ../database-manager
+      dockerfile: Dockerfile
+      args:
+        JAVA_VERSION: ${JAVA_VERSION}
+    restart: no
+    env_file:
+      - path: .env
+    ports:
+      - "9090:9090"
