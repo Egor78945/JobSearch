@@ -50,3 +50,14 @@ services:
     restart: no
     env_file:
       - path: .env
+
+  nginx:
+    image: nginx
+    networks:
+      - tool
+    volumes:
+      - ../configuration/nginx/nginx.conf:/etc/nginx/nginx.conf
+    env_file:
+      - .env
+    ports:
+      - ${NGINX_PORT_OUTER}:${NGINX_PORT_INNER}
