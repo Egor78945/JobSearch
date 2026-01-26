@@ -12,6 +12,16 @@ spring:
     change-log: db/changelog/main/main-changelog.yml
     enabled: true
 
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${SERVICE_DISCOVERY_HOST}:${SERVICE_DISCOVERY_PORT_INNER}/eureka
+    register-with-eureka: true
+    fetch-registry: true
+
 grpc:
   server:
     port: ${DATABASE_MANAGER_PORT_GRPC}
+
+server:
+  port: ${DATABASE_MANAGER_PORT}
