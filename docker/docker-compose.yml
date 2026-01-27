@@ -75,3 +75,14 @@ services:
     env_file:
       - .env
 
+  authentication-service:
+    build:
+      context: ../authentication-service
+      dockerfile: Dockerfile
+      args:
+        JAVA_VERSION: ${JAVA_VERSION}
+    networks:
+      - service
+    restart: no
+    env_file:
+      - .env

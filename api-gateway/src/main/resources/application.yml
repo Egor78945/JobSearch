@@ -1,6 +1,15 @@
 spring:
   application:
     name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: authentication-service
+              uri: lb://${AUTHENTICATION_SERVICE_HOST}
+              predicates:
+                - Path=/auth/**
 
 eureka:
   client:
