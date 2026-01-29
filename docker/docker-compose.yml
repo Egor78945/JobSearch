@@ -86,3 +86,27 @@ services:
     restart: no
     env_file:
       - .env
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION}
+    networks:
+      - service
+      - tool
+    container_name: ${KEYCLOAK_HOST}
+    command:
+      - start-dev
+      - --import-realm
+    environment:
+      - KC_BOOTSTRAP_ADMIN_USERNAME=${KEYCLOAK_ADMIN_NAME}
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT_INNER}/${POSTGRES_DB}
+      - KC_DB_USERNAME=${POSTGRES_USER}
+      - KC_DB_PASSWORD=${POSTGRES_PASSWORD}
+      - KC_HTTP_PORT=${KEYCLOAK_PORT_INNER}
+    volumes:
+      - ../configuration/keycloak/realm/import/realm-import.json:/opt/keycloak/data/import/realm-config.json:ro
+    env_file:
+      - .env
+    ports:
+      - ${KEYCLOAK_PORT_OUTER}:${KEYCLOAK_PORT_INNER}
