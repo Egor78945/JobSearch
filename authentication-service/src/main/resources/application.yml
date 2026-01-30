@@ -9,5 +9,11 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
 
+grpc:
+  client:
+    database-manager-grpc-service:
+      address: discovery:///${DATABASE_MANAGER_HOST}
+      negotiation-type: plaintext
+
 server:
   port: ${AUTHENTICATION_SERVICE_PORT}
