@@ -1,9 +1,23 @@
 package com.example.authentication_service.model.user.security;
 
+import com.example.authentication_service.util.validation.annotation.Password;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.Objects;
 
 public class UserAuthenticationModel {
+    @NotNull
+    @NotEmpty
+    @NotBlank
+    @Email
     private String email;
+    @NotNull
+    @NotEmpty
+    @NotBlank
+    @Password
     private String password;
 
     public UserAuthenticationModel(String email, String password) {
