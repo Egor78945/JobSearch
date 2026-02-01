@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version "$springBootVersion"
     id 'io.spring.dependency-management' version "$springDependencyManagementVersion"
+    id 'com.google.protobuf' version "$protobufVersion"
 }
 
 group = 'com.example'
@@ -21,8 +22,31 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation "net.devh:grpc-client-spring-boot-starter:$grpcClientSpringBootStarterVersion"
+    implementation "com.google.protobuf:protobuf-java:$protobufJavaVersion"
+    implementation "com.google.guava:guava:$guavaVersion"
+    implementation "javax.annotation:javax.annotation-api:$javaxAnnotationApiVersion"
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:$protocVersion"
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:$protocGenGrpcJavaVersion"
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.plugins {
+                grpc {}
+            }
+        }
+    }
 }
 
 dependencyManagement {
