@@ -76,6 +76,7 @@ services:
       - .env
 
   authentication-service:
+    container_name: authentication-service
     build:
       context: ../authentication-service
       dockerfile: Dockerfile
