@@ -6,15 +6,15 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class KeycloakEnvironment {
     private final String keycloakServerHost;
+    private final String realmName;
+    private final String clientId;
     private final int keycloakServerPort;
-    private final String keycloakAdminUsername;
-    private final String keycloakAdminPassword;
 
-    public KeycloakEnvironment(@Value("${keycloak.host}") String keycloakServerHost, @Value("${keycloak.port}") int keycloakServerPort, @Value("${keycloak.admin.username}") String keycloakAdminUsername, @Value("${keycloak.admin.password}") String keycloakAdminPassword) {
+    public KeycloakEnvironment(@Value("${keycloak.host}") String keycloakServerHost, @Value("${keycloak.realm.test.name}") String realmName, @Value("${keycloak.realm.test.client.id}") String clientId, @Value("${keycloak.port}") int keycloakServerPort) {
         this.keycloakServerHost = keycloakServerHost;
+        this.realmName = realmName;
+        this.clientId = clientId;
         this.keycloakServerPort = keycloakServerPort;
-        this.keycloakAdminUsername = keycloakAdminUsername;
-        this.keycloakAdminPassword = keycloakAdminPassword;
     }
 
     public String getKeycloakServerHost() {
@@ -25,11 +25,11 @@ public class KeycloakEnvironment {
         return keycloakServerPort;
     }
 
-    public String getKeycloakAdminUsername() {
-        return keycloakAdminUsername;
+    public String getRealmName() {
+        return realmName;
     }
 
-    public String getKeycloakAdminPassword() {
-        return keycloakAdminPassword;
+    public String getClientId() {
+        return clientId;
     }
 }
