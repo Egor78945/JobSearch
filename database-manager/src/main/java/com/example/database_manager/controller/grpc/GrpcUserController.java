@@ -2,6 +2,8 @@ package com.example.database_manager.controller.grpc;
 
 import com.example.database_manager.exception.ServiceException;
 import com.example.database_manager.service.user.UserService;
+import com.example.database_manager.service.user.common.CommonUserService;
+import com.example.database_manager.util.mapper.GrpcMapper;
 import com.proto.user.UserProtoConfiguration;
 import com.proto.user.UserProtoServiceGrpc;
 import io.grpc.stub.StreamObserver;
@@ -12,9 +14,11 @@ import java.util.UUID;
 @GrpcService
 public class GrpcUserController extends UserProtoServiceGrpc.UserProtoServiceImplBase {
     protected final UserService<UserProtoConfiguration.UserMessage> userService;
+    protected final CommonUserService commonUserService;
 
-    public GrpcUserController(UserService<UserProtoConfiguration.UserMessage> userService) {
+    public GrpcUserController(UserService<UserProtoConfiguration.UserMessage> userService, CommonUserService commonUserService) {
         this.userService = userService;
+        this.commonUserService = commonUserService;
     }
 
     @Override
@@ -41,6 +45,17 @@ public class GrpcUserController extends UserProtoServiceGrpc.UserProtoServiceImp
     public void findByEmail(UserProtoConfiguration.StringMessage request, StreamObserver<UserProtoConfiguration.UserMessage> responseObserver) {
         try {
             responseObserver.onNext(userService.findByEmail(request.getString()));
+            responseObserver.onCompleted();
+        } catch (ServiceException e) {
+            responseObserver.onError(e);
+        }
+    }
+
+    @Override
+    public void deleteByEmail(UserProtoConfiguration.StringMessage request, StreamObserver<UserProtoConfiguration.EmptyMessage> responseObserver) {
+        try {
+            commonUserService.deleteByEmail(request.getString());
+            responseObserver.onNext(GrpcMapper.mapTo());
             responseObserver.onCompleted();
         } catch (ServiceException e) {
             responseObserver.onError(e);

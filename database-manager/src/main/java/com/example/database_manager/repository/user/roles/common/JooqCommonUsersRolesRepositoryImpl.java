@@ -23,4 +23,17 @@ public class JooqCommonUsersRolesRepositoryImpl extends JooqRepository implement
                                         .and(Tables.USERS_ROLES.ROLE_ID.eq(roleId)))
                 );
     }
+
+    @Override
+    public void deleteAllByUserEmail(String email) {
+        dslContext
+                .deleteFrom(Tables.USERS_ROLES)
+                .where(Tables.USERS_ROLES.USER_UUID.in(
+                        dslContext
+                                .select(Tables.USERS.UUID)
+                                .from(Tables.USERS)
+                                .where(Tables.USERS.EMAIL.eq(email))
+                ))
+                .execute();
+    }
 }

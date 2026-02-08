@@ -13,17 +13,17 @@ import java.time.Instant;
 import java.util.List;
 
 @Service
-public class UserProtoRegistrationServiceImpl implements RegistrationService<UserAuthenticationModel> {
+public class UserProtoRegistrationService implements RegistrationService<UserAuthenticationModel> {
     protected final UserAuthenticationGrpcClientService grpcClientService;
 
-    public UserProtoRegistrationServiceImpl(UserAuthenticationGrpcClientService userAuthenticationGrpcClientService) {
+    public UserProtoRegistrationService(UserAuthenticationGrpcClientService userAuthenticationGrpcClientService) {
         this.grpcClientService = userAuthenticationGrpcClientService;
     }
 
 
     @Override
     public void register(UserAuthenticationModel registerRequest) {
-        UserProtoConfiguration.UserMessage userMessage = UserMapper.mapTo(0, "", registerRequest.getEmail(), UserStatus.STATUS_ACTIVE.getId(), Instant.now().toEpochMilli());
+        UserProtoConfiguration.UserMessage userMessage = UserMapper.mapTo(registerRequest.getEmail(), UserStatus.STATUS_ACTIVE.getId(), Instant.now().toEpochMilli());
         UserProtoConfiguration.UserRegistrationMessage userRegistrationMessage = UserMapper.mapTo(userMessage, List.of(UserRole.ROLE_USER.getId()));
         grpcClientService.register(userRegistrationMessage);
     }

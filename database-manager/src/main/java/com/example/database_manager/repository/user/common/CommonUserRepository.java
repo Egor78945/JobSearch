@@ -6,5 +6,6 @@ public interface CommonUserRepository {
     boolean existsById(Long id);
     boolean existsByEmail(String email);
     boolean existsByUuid(UUID uuid);
+    void deleteByEmail(String email);
     UUID getUnbusyUuid();
 }

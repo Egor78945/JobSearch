@@ -15,6 +15,14 @@ public class UserMapper {
                 .build();
     }
 
+    public static UserProtoConfiguration.UserMessage mapTo(String email, long userStatusId, long registeredAt) {
+        return UserProtoConfiguration.UserMessage.newBuilder()
+                .setEmail(email)
+                .setUserStatusId(userStatusId)
+                .setRegisteredAt(registeredAt)
+                .build();
+    }
+
     public static UserProtoConfiguration.UserRegistrationMessage mapTo(UserProtoConfiguration.UserMessage userMessage, List<Long> userRoles) {
         return UserProtoConfiguration.UserRegistrationMessage.newBuilder()
                 .setUserMessage(userMessage)

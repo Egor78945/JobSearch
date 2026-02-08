@@ -2,7 +2,7 @@ package com.example.database_manager.service.user.roles;
 
 import com.example.database_manager.exception.AlreadyExistsException;
 import com.example.database_manager.repository.user.roles.UsersRolesRepository;
-import com.example.database_manager.repository.user.roles.common.CommonUsersRolesRepository;
+import com.example.database_manager.service.user.roles.common.CommonUsersRolesService;
 import com.proto.user.UserProtoConfiguration;
 import org.springframework.stereotype.Service;
 
@@ -10,9 +10,9 @@ import java.util.UUID;
 
 @Service
 public class UsersRolesProtoRepositoryServiceImpl extends UsersRolesRepositoryService<UserProtoConfiguration.LongStringMessage> {
-    protected final CommonUsersRolesRepository commonUsersRolesRepository;
+    protected final CommonUsersRolesService commonUsersRolesRepository;
 
-    public UsersRolesProtoRepositoryServiceImpl(UsersRolesRepository<UserProtoConfiguration.LongStringMessage> usersRolesRepository, CommonUsersRolesRepository commonUsersRolesRepository) {
+    public UsersRolesProtoRepositoryServiceImpl(UsersRolesRepository<UserProtoConfiguration.LongStringMessage> usersRolesRepository, CommonUsersRolesService commonUsersRolesRepository) {
         super(usersRolesRepository);
         this.commonUsersRolesRepository = commonUsersRolesRepository;
     }
