@@ -1,6 +1,7 @@
 package com.example.authentication_service.configuration.grpc.client;
 
 import com.proto.user.UserProtoAuthenticationServiceGrpc;
+import com.proto.user.UserProtoServiceGrpc;
 import io.grpc.Channel;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.context.annotation.Bean;
@@ -14,5 +15,10 @@ public class GrpcClientConfiguration {
     @Bean
     public UserProtoAuthenticationServiceGrpc.UserProtoAuthenticationServiceBlockingStub userProtoAuthenticationServiceBlockingStub(){
         return UserProtoAuthenticationServiceGrpc.newBlockingStub(channel);
+    }
+
+    @Bean
+    public UserProtoServiceGrpc.UserProtoServiceBlockingStub userProtoServiceBlockingStub(){
+        return UserProtoServiceGrpc.newBlockingStub(channel);
     }
 }

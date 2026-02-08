@@ -8,12 +8,12 @@ import org.keycloak.admin.client.KeycloakBuilder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class KeycloakHandlerImplementation implements KeycloakHandler {
+public class KeycloakHandlerImpl implements KeycloakHandler {
     protected Keycloak keycloak;
     protected KeycloakMasterRealmUser keycloakMasterRealmSubject;
     protected KeycloakEnvironment keycloakEnvironment;
 
-    public KeycloakHandlerImplementation(KeycloakMasterRealmUser keycloakMasterRealmSubject, KeycloakEnvironment keycloakEnvironment) {
+    public KeycloakHandlerImpl(KeycloakMasterRealmUser keycloakMasterRealmSubject, KeycloakEnvironment keycloakEnvironment) {
         this.keycloakMasterRealmSubject = keycloakMasterRealmSubject;
         this.keycloakEnvironment = keycloakEnvironment;
     }

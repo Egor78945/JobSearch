@@ -4,4 +4,5 @@ import java.util.UUID;
 
 public interface CommonUsersRolesRepository {
     boolean existsByUserUuidAndRoleId(UUID uuid, long roleId);
+    void deleteAllByUserEmail(String email);
 }

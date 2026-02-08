@@ -35,6 +35,7 @@ service UserProtoAuthenticationService {
 }
 
 service UserProtoService {
+  rpc deleteByEmail(StringMessage) returns (EmptyMessage);
   rpc findById(LongMessage) returns (UserMessage);
   rpc findByUuid(StringMessage) returns (UserMessage);
   rpc findByEmail(StringMessage) returns (UserMessage);

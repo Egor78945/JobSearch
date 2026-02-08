@@ -48,6 +48,14 @@ public class JooqCommonUserRepositoryImpl extends JooqRepository implements Comm
     }
 
     @Override
+    public void deleteByEmail(String email) {
+        dslContext
+                .deleteFrom(Tables.USERS)
+                .where(Tables.USERS.EMAIL.eq(email))
+                .execute();
+    }
+
+    @Override
     public UUID getUnbusyUuid() {
         UUID uuid = UUID.randomUUID();
         for (int i = 0; i < 10; i++) {
