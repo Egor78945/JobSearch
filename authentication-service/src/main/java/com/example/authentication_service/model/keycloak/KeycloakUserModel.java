@@ -1,25 +1,17 @@
 package com.example.authentication_service.model.keycloak;
 
-import com.example.authentication_service.model.user.security.UserAuthenticationModel;
-import org.springframework.context.annotation.Primary;
+import com.example.authentication_service.model.user.UserModel;
 
-public class KeycloakUser extends UserAuthenticationModel {
+import java.util.Arrays;
+
+public class KeycloakUserModel extends UserModel {
     protected String username;
     protected String userId;
     protected String realmName;
     protected String clientId;
     protected String[] groups;
 
-    public KeycloakUser(String email, String username, String password, String userId, String realmName, String clientId, String[] groups) {
-        super(email, password);
-        this.username = username;
-        this.userId = userId;
-        this.realmName = realmName;
-        this.clientId = clientId;
-        this.groups = groups;
-    }
-
-    public KeycloakUser(String email, String username, String password, String realmName, String clientId, String[] groups) {
+    public KeycloakUserModel(String email, String username, String password, String realmName, String clientId, String[] groups) {
         super(email, password);
         this.username = username;
         this.realmName = realmName;
@@ -27,7 +19,7 @@ public class KeycloakUser extends UserAuthenticationModel {
         this.groups = groups;
     }
 
-    public KeycloakUser(String email, String username, String password, String realmName, String clientId) {
+    public KeycloakUserModel(String email, String username, String password, String realmName, String clientId) {
         super(email, password);
         this.username = username;
         this.realmName = realmName;
@@ -72,5 +64,16 @@ public class KeycloakUser extends UserAuthenticationModel {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    @Override
+    public String toString() {
+        return "KeycloakUser{" +
+                "username='" + username + '\'' +
+                ", userId='" + userId + '\'' +
+                ", realmName='" + realmName + '\'' +
+                ", clientId='" + clientId + '\'' +
+                ", groups=" + Arrays.toString(groups) +
+                "} " + super.toString();
     }
 }

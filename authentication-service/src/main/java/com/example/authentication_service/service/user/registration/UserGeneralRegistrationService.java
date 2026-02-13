@@ -1,7 +1,6 @@
 package com.example.authentication_service.service.user.registration;
 
-import com.example.authentication_service.exception.ServiceException;
-import com.example.authentication_service.model.user.security.UserAuthenticationModel;
+import com.example.authentication_service.model.user.UserModel;
 import com.example.authentication_service.service.RegistrationService;
 import com.example.authentication_service.service.user.common.CommonUserService;
 import org.springframework.context.annotation.Primary;
@@ -9,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Primary
-public class UserGeneralRegistrationService implements RegistrationService<UserAuthenticationModel> {
+public class UserGeneralRegistrationService implements RegistrationService<UserModel> {
     protected final UserKeycloakRegistrationService userKeycloakRegistrationService;
     protected final UserProtoRegistrationService userProtoRegistrationService;
     protected final CommonUserService commonUserService;
@@ -21,13 +20,12 @@ public class UserGeneralRegistrationService implements RegistrationService<UserA
     }
 
     @Override
-    public void register(UserAuthenticationModel registerRequest) {
+    public void register(UserModel registerRequest) {
         userProtoRegistrationService.register(registerRequest);
         try {
             userKeycloakRegistrationService.register(registerRequest);
         } catch (Exception e) {
             commonUserService.deleteByEmail(registerRequest.getEmail());
-            throw new ServiceException("keycloak registration failed");
         }
     }
 }

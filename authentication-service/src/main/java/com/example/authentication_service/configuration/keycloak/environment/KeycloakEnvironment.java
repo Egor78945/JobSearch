@@ -6,14 +6,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class KeycloakEnvironment {
     private final String keycloakServerHost;
-    private final String realmName;
-    private final String clientId;
+    private final String authenticationRealmName;
+    private final String authenticationClientId;
     private final int keycloakServerPort;
 
-    public KeycloakEnvironment(@Value("${keycloak.host}") String keycloakServerHost, @Value("${keycloak.realm.test.name}") String realmName, @Value("${keycloak.realm.test.client.id}") String clientId, @Value("${keycloak.port}") int keycloakServerPort) {
+    public KeycloakEnvironment(@Value("${keycloak.host}") String keycloakServerHost, @Value("${keycloak.realm.test.name}") String authenticationRealmName, @Value("${keycloak.realm.test.client.id}") String authenticationClientId, @Value("${keycloak.port}") int keycloakServerPort) {
         this.keycloakServerHost = keycloakServerHost;
-        this.realmName = realmName;
-        this.clientId = clientId;
+        this.authenticationRealmName = authenticationRealmName;
+        this.authenticationClientId = authenticationClientId;
         this.keycloakServerPort = keycloakServerPort;
     }
 
@@ -25,11 +25,12 @@ public class KeycloakEnvironment {
         return keycloakServerPort;
     }
 
-    public String getRealmName() {
-        return realmName;
+
+    public String getAuthenticationRealmName() {
+        return authenticationRealmName;
     }
 
-    public String getClientId() {
-        return clientId;
+    public String getAuthenticationClientId() {
+        return authenticationClientId;
     }
 }

@@ -2,7 +2,7 @@ package com.example.authentication_service.service.user.registration;
 
 import com.example.authentication_service.enumeration.UserRole;
 import com.example.authentication_service.enumeration.UserStatus;
-import com.example.authentication_service.model.user.security.UserAuthenticationModel;
+import com.example.authentication_service.model.user.UserModel;
 import com.example.authentication_service.service.RegistrationService;
 import com.example.authentication_service.service.user.grpc.client.UserAuthenticationGrpcClientService;
 import com.example.authentication_service.util.mapper.UserMapper;
@@ -13,7 +13,7 @@ import java.time.Instant;
 import java.util.List;
 
 @Service
-public class UserProtoRegistrationService implements RegistrationService<UserAuthenticationModel> {
+public class UserProtoRegistrationService implements RegistrationService<UserModel> {
     protected final UserAuthenticationGrpcClientService grpcClientService;
 
     public UserProtoRegistrationService(UserAuthenticationGrpcClientService userAuthenticationGrpcClientService) {
@@ -22,7 +22,7 @@ public class UserProtoRegistrationService implements RegistrationService<UserAut
 
 
     @Override
-    public void register(UserAuthenticationModel registerRequest) {
+    public void register(UserModel registerRequest) {
         UserProtoConfiguration.UserMessage userMessage = UserMapper.mapTo(registerRequest.getEmail(), UserStatus.STATUS_ACTIVE.getId(), Instant.now().toEpochMilli());
         UserProtoConfiguration.UserRegistrationMessage userRegistrationMessage = UserMapper.mapTo(userMessage, List.of(UserRole.ROLE_USER.getId()));
         grpcClientService.register(userRegistrationMessage);
