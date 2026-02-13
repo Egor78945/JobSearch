@@ -1,4 +1,4 @@
-package com.example.authentication_service.model.user.security;
+package com.example.authentication_service.model.user;
 
 import com.example.authentication_service.util.validation.annotation.Password;
 import jakarta.validation.constraints.Email;
@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.Objects;
 
-public class UserAuthenticationModel {
+public class UserModel {
     @NotNull
     @NotEmpty
     @NotBlank
@@ -20,7 +20,7 @@ public class UserAuthenticationModel {
     @Password
     private String password;
 
-    public UserAuthenticationModel(String email, String password) {
+    public UserModel(String email, String password) {
         this.email = email;
         this.password = password;
     }
@@ -44,7 +44,7 @@ public class UserAuthenticationModel {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        UserAuthenticationModel that = (UserAuthenticationModel) o;
+        UserModel that = (UserModel) o;
         return Objects.equals(email, that.email);
     }
 

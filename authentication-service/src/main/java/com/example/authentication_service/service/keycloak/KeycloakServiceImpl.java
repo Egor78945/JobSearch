@@ -1,9 +1,8 @@
 package com.example.authentication_service.service.keycloak;
 
-import com.example.authentication_service.configuration.keycloak.KeycloakHandler;
 import com.example.authentication_service.exception.NotFoundException;
 import com.example.authentication_service.exception.RequestRejectedException;
-import com.example.authentication_service.model.keycloak.KeycloakUser;
+import com.example.authentication_service.model.keycloak.KeycloakUserModel;
 import com.example.authentication_service.util.mapper.KeycloakMapper;
 import jakarta.ws.rs.core.Response;
 import org.keycloak.representations.idm.CredentialRepresentation;
@@ -13,18 +12,16 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class KeycloakServiceImpl implements KeycloakService<KeycloakUser>{
-    protected KeycloakHandler keycloakHandler;
-    protected KeycloakResourceService keycloakResourceService;
+public class KeycloakServiceImpl implements KeycloakService<KeycloakUserModel>{
+    protected KeycloakResourceManager keycloakResourceManager;
 
-    public KeycloakServiceImpl(KeycloakHandler keycloakHandler, KeycloakResourceService keycloakResourceService) {
-        this.keycloakHandler = keycloakHandler;
-        this.keycloakResourceService = keycloakResourceService;
+    public KeycloakServiceImpl(KeycloakResourceManager keycloakResourceManager) {
+        this.keycloakResourceManager = keycloakResourceManager;
     }
 
     @Override
-    public String createUser(KeycloakUser subject) {
-        try (Response response = keycloakResourceService.getUsersResource(subject.getRealmName()).create(KeycloakMapper.buildUserRepresentation(subject.getUsername(), subject.getUsername()))) {
+    public String createUser(KeycloakUserModel subject) {
+        try (Response response = keycloakResourceManager.usersResource(subject.getRealmName()).create(KeycloakMapper.buildUserRepresentation(subject.getUsername(), subject.getEmail()))) {
             if (response.getStatus() / 100 != 2) {
                 throw new RequestRejectedException("user can not be created");
             } else {
@@ -32,21 +29,22 @@ public class KeycloakServiceImpl implements KeycloakService<KeycloakUser>{
             }
         }
     }
+
     @Override
-    public void resetPassword(KeycloakUser keycloakUser) {
-        keycloakResourceService.getUsersResource(keycloakUser.getRealmName())
-                .get(keycloakUser.getUserId())
-                .resetPassword(KeycloakMapper.buildCredentialRepresentation(keycloakUser.getPassword(), CredentialRepresentation.PASSWORD));
+    public void resetPassword(KeycloakUserModel keycloakUserModel) {
+        keycloakResourceManager.usersResource(keycloakUserModel.getRealmName())
+                .get(keycloakUserModel.getUserId())
+                .resetPassword(KeycloakMapper.buildCredentialRepresentation(keycloakUserModel.getPassword(), CredentialRepresentation.PASSWORD));
     }
 
     @Override
-    public void joinGroup(KeycloakUser keycloakUser) {
-        List<GroupRepresentation> groupRepresentations = keycloakResourceService.getGroupRepresentation(keycloakUser.getRealmName(), keycloakUser.getGroups());
+    public void joinGroup(KeycloakUserModel keycloakUserModel) {
+        List<GroupRepresentation> groupRepresentations = keycloakResourceManager.groupRepresentation(keycloakUserModel.getRealmName(), keycloakUserModel.getGroups());
         if (!groupRepresentations.isEmpty()) {
             groupRepresentations
-                    .forEach(groupRepresentation -> keycloakResourceService
-                            .getUsersResource(keycloakUser.getRealmName())
-                            .get(keycloakUser.getUserId())
+                    .forEach(groupRepresentation -> keycloakResourceManager
+                            .usersResource(keycloakUserModel.getRealmName())
+                            .get(keycloakUserModel.getUserId())
                             .joinGroup(groupRepresentation.getId()));
         } else {
             throw new NotFoundException("unknown groups");
