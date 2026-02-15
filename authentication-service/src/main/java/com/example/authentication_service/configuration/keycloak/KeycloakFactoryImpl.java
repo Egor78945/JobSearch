@@ -20,7 +20,7 @@ public class KeycloakFactoryImpl implements KeycloakFactory {
 
     @Override
     public Keycloak create(String username, String password) {
-        ClientRepresentation client = keycloakResourceManager.clientsResource(keycloakEnvironment.getAuthenticationRealmName()).findByClientId(keycloakEnvironment.getAuthenticationClientId()).getFirst();
+        ClientRepresentation client = keycloakResourceManager.clientRepresentation(keycloakEnvironment.getAuthenticationRealmName(), keycloakEnvironment.getAuthenticationClientId());
         return KeycloakBuilder
                 .builder()
                 .serverUrl(String.format("http://%s:%s", keycloakEnvironment.getKeycloakServerHost(), keycloakEnvironment.getKeycloakServerPort()))

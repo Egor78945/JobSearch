@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 @Service
-public class UserKeycloakAuthenticationService implements AuthenticationService<UserModel, Map<String, String>> {
+public class UserKeycloakAuthenticationService implements AuthenticationService<UserModel, String, Map<String, String>> {
     protected final KeycloakTokenManager<Map<String, String>> keycloakTokenManager;
 
     public UserKeycloakAuthenticationService(KeycloakTokenManager<Map<String, String>> keycloakTokenManager) {
@@ -16,7 +16,12 @@ public class UserKeycloakAuthenticationService implements AuthenticationService<
     }
 
     @Override
-    public Map<String, String> authenticate(UserModel loginModel) {
+    public Map<String, String> accessToken(UserModel loginModel) {
         return keycloakTokenManager.accessToken(loginModel.getEmail(), loginModel.getPassword());
+    }
+
+    @Override
+    public Map<String, String> refreshToken(String refreshTokenModel) {
+        return keycloakTokenManager.accessToken(refreshTokenModel);
     }
 }

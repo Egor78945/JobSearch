@@ -1,5 +1,6 @@
 package com.example.authentication_service.service.keycloak;
 
+import com.example.authentication_service.configuration.keycloak.environment.KeycloakEnvironment;
 import com.example.authentication_service.exception.NotFoundException;
 import com.example.authentication_service.exception.RequestRejectedException;
 import com.example.authentication_service.model.keycloak.KeycloakUserModel;
@@ -14,9 +15,11 @@ import java.util.List;
 @Service
 public class KeycloakServiceImpl implements KeycloakService<KeycloakUserModel>{
     protected KeycloakResourceManager keycloakResourceManager;
+    protected final KeycloakEnvironment keycloakEnvironment;
 
-    public KeycloakServiceImpl(KeycloakResourceManager keycloakResourceManager) {
+    public KeycloakServiceImpl(KeycloakResourceManager keycloakResourceManager, KeycloakEnvironment keycloakEnvironment) {
         this.keycloakResourceManager = keycloakResourceManager;
+        this.keycloakEnvironment = keycloakEnvironment;
     }
 
     @Override

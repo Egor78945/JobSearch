@@ -1,10 +1,12 @@
 package com.example.authentication_service.service.keycloak;
 
+import com.example.authentication_service.configuration.keycloak.environment.KeycloakEnvironment;
 import com.example.authentication_service.exception.NotFoundException;
 import com.example.authentication_service.model.keycloak.KeycloakAdminModel;
 import org.keycloak.admin.client.resource.ClientsResource;
 import org.keycloak.admin.client.resource.GroupsResource;
 import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +16,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class KeycloakResourceManagerImpl implements KeycloakResourceManager {
-    private final KeycloakAdminModel keycloakAdmin;
+    protected final KeycloakAdminModel keycloakAdmin;
+    protected final KeycloakEnvironment keycloakEnvironment;
 
-    public KeycloakResourceManagerImpl(KeycloakAdminModel keycloakAdminModel) {
+    public KeycloakResourceManagerImpl(KeycloakAdminModel keycloakAdminModel, KeycloakEnvironment keycloakEnvironment) {
         this.keycloakAdmin = keycloakAdminModel;
+        this.keycloakEnvironment = keycloakEnvironment;
     }
 
     @Override
@@ -33,6 +37,11 @@ public class KeycloakResourceManagerImpl implements KeycloakResourceManager {
     @Override
     public ClientsResource clientsResource(String realmName) {
         return keycloakAdmin.getKeycloak().realm(realmName).clients();
+    }
+
+    @Override
+    public ClientRepresentation clientRepresentation(String realmName, String clientId) {
+        return clientsResource(realmName).findByClientId(clientId).getFirst();
     }
 
     @Override
