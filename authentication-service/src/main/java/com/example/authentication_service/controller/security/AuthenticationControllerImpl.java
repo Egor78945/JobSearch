@@ -17,9 +17,9 @@ import java.util.Map;
 @ServiceExceptionHandler
 public class AuthenticationControllerImpl implements AuthenticationController<UserModel, UserModel> {
     protected final RegistrationService<UserModel> registrationService;
-    protected final AuthenticationService<UserModel, Map<String, String>> authenticationService;
+    protected final AuthenticationService<UserModel, String, Map<String, String>> authenticationService;
 
-    public AuthenticationControllerImpl(RegistrationService<UserModel> registrationService, AuthenticationService<UserModel, Map<String, String>> authenticationService) {
+    public AuthenticationControllerImpl(RegistrationService<UserModel> registrationService, AuthenticationService<UserModel, String, Map<String, String>> authenticationService) {
         this.registrationService = registrationService;
         this.authenticationService = authenticationService;
     }
@@ -34,6 +34,12 @@ public class AuthenticationControllerImpl implements AuthenticationController<Us
     @Override
     @GetMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody UserModel loginModel) {
-        return ResponseEntity.ok(authenticationService.authenticate(loginModel));
+        return ResponseEntity.ok(authenticationService.accessToken(loginModel));
+    }
+
+    @Override
+    @GetMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@RequestParam("refreshToken") String refreshToken) {
+        return ResponseEntity.ok(authenticationService.refreshToken(refreshToken));
     }
 }
