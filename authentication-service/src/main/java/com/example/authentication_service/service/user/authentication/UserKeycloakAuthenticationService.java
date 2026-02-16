@@ -1,27 +1,26 @@
 package com.example.authentication_service.service.user.authentication;
 
+import com.example.authentication_service.model.keycloak.TokenResponse;
 import com.example.authentication_service.model.user.UserModel;
 import com.example.authentication_service.service.AuthenticationService;
 import com.example.authentication_service.service.keycloak.KeycloakTokenManager;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-
 @Service
-public class UserKeycloakAuthenticationService implements AuthenticationService<UserModel, String, Map<String, String>> {
-    protected final KeycloakTokenManager<Map<String, String>> keycloakTokenManager;
+public class UserKeycloakAuthenticationService implements AuthenticationService<UserModel, String, TokenResponse> {
+    protected final KeycloakTokenManager<TokenResponse> keycloakTokenManager;
 
-    public UserKeycloakAuthenticationService(KeycloakTokenManager<Map<String, String>> keycloakTokenManager) {
+    public UserKeycloakAuthenticationService(KeycloakTokenManager<TokenResponse> keycloakTokenManager) {
         this.keycloakTokenManager = keycloakTokenManager;
     }
 
     @Override
-    public Map<String, String> accessToken(UserModel loginModel) {
+    public TokenResponse accessToken(UserModel loginModel) {
         return keycloakTokenManager.accessToken(loginModel.getEmail(), loginModel.getPassword());
     }
 
     @Override
-    public Map<String, String> refreshToken(String refreshTokenModel) {
+    public TokenResponse refreshToken(String refreshTokenModel) {
         return keycloakTokenManager.accessToken(refreshTokenModel);
     }
 }
