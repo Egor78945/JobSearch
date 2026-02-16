@@ -54,9 +54,11 @@ public class KeycloakTokenManagerImpl implements KeycloakTokenManager<Map<String
         map.put("client_secret", List.of(client.getSecret()));
         map.put("refresh_token", List.of(refreshToken));
         map.put("grant_type", List.of("refresh_token"));
-        HttpEntity<MultiValueMap<String, String>> httpEntity = new RequestEntity<>(map, headers, HttpMethod.POST, URI.create(String.format("http://%s:%s/realms/%s/protocol/openid-connect/token", keycloakEnvironment.getKeycloakServerHost(), keycloakEnvironment.getKeycloakServerPort(), keycloakEnvironment.getAuthenticationRealmName())));
+
+        HttpEntity<MultiValueMap<String, String>> httpEntity = new RequestEntity<>(map, headers, HttpMethod.POST, uri);
 
         Map<String, String> response = webClientService.post(uri.toString(), httpEntity, Map.class).getBody();
+
         return Map.of("access_token", response.get("access_token"), "refresh_token", response.get("refresh_token"), "expires_in", String.valueOf(response.get("expires_in")), "refresh_expires_in", String.valueOf(response.get("refresh_expires_in")));
     }
 }

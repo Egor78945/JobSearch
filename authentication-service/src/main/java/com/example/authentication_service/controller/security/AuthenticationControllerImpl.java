@@ -2,6 +2,7 @@ package com.example.authentication_service.controller.security;
 
 import com.example.authentication_service.controller.advice.handler.ServiceExceptionHandler;
 import com.example.authentication_service.controller.advice.handler.ValidationExceptionHandler;
+import com.example.authentication_service.model.keycloak.RefreshTokenModel;
 import com.example.authentication_service.model.user.UserModel;
 import com.example.authentication_service.service.AuthenticationService;
 import com.example.authentication_service.service.RegistrationService;
@@ -33,13 +34,13 @@ public class AuthenticationControllerImpl implements AuthenticationController<Us
 
     @Override
     @GetMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody UserModel loginModel) {
+    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody UserModel loginModel) {
         return ResponseEntity.ok(authenticationService.accessToken(loginModel));
     }
 
     @Override
     @GetMapping("/refresh")
-    public ResponseEntity<?> refreshToken(@RequestParam("refreshToken") String refreshToken) {
-        return ResponseEntity.ok(authenticationService.refreshToken(refreshToken));
+    public ResponseEntity<Map<String, String>> refreshToken(@Valid @RequestBody RefreshTokenModel refreshTokenModel) {
+        return ResponseEntity.ok(authenticationService.refreshToken(refreshTokenModel.getToken()));
     }
 }
