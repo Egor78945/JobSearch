@@ -13,7 +13,7 @@ import java.time.Instant;
 import java.util.List;
 
 @Service
-public class UserProtoRegistrationService implements RegistrationService<UserModel> {
+public class UserProtoRegistrationService implements RegistrationService<UserModel, UserProtoConfiguration.UserMessage> {
     protected final UserAuthenticationGrpcClientService grpcClientService;
 
     public UserProtoRegistrationService(UserAuthenticationGrpcClientService userAuthenticationGrpcClientService) {
@@ -22,9 +22,9 @@ public class UserProtoRegistrationService implements RegistrationService<UserMod
 
 
     @Override
-    public void register(UserModel registerRequest) {
+    public UserProtoConfiguration.UserMessage register(UserModel registerRequest) {
         UserProtoConfiguration.UserMessage userMessage = UserMapper.mapTo(registerRequest.getEmail(), UserStatus.STATUS_ACTIVE.getId(), Instant.now().toEpochMilli());
         UserProtoConfiguration.UserRegistrationMessage userRegistrationMessage = UserMapper.mapTo(userMessage, List.of(UserRole.ROLE_USER.getId()));
-        grpcClientService.register(userRegistrationMessage);
+        return grpcClientService.register(userRegistrationMessage).getUserMessage();
     }
 }

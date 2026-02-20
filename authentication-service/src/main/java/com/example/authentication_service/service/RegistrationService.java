@@ -1,5 +1,5 @@
 package com.example.authentication_service.service;
 
-public interface RegistrationService<R> {
-    void register(R registerRequest);
+public interface RegistrationService<R, A> {
+    A register(R registerRequest);
 }

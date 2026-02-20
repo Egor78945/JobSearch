@@ -6,13 +6,21 @@ import java.util.Arrays;
 
 public class KeycloakUserModel extends UserModel {
     protected String username;
+    protected String uuid;
     protected String userId;
     protected String realmName;
     protected String clientId;
     protected String[] groups;
 
-    public KeycloakUserModel(String email, String username, String password, String realmName, String clientId, String[] groups) {
+    public KeycloakUserModel(String email, String username, String uuid, String password) {
         super(email, password);
+        this.username = username;
+        this.uuid = uuid;
+    }
+
+    public KeycloakUserModel(String email, String username, String uuid, String password, String realmName, String clientId, String[] groups) {
+        super(email, password);
+        this.uuid = uuid;
         this.username = username;
         this.realmName = realmName;
         this.clientId = clientId;
@@ -66,10 +74,19 @@ public class KeycloakUserModel extends UserModel {
         this.userId = userId;
     }
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
     @Override
     public String toString() {
-        return "KeycloakUser{" +
+        return "KeycloakUserModel{" +
                 "username='" + username + '\'' +
+                ", uuid='" + uuid + '\'' +
                 ", userId='" + userId + '\'' +
                 ", realmName='" + realmName + '\'' +
                 ", clientId='" + clientId + '\'' +
