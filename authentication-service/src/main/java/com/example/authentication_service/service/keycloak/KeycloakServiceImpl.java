@@ -24,7 +24,7 @@ public class KeycloakServiceImpl implements KeycloakService<KeycloakUserModel>{
 
     @Override
     public String createUser(KeycloakUserModel subject) {
-        try (Response response = keycloakResourceManager.usersResource(subject.getRealmName()).create(KeycloakMapper.buildUserRepresentation(subject.getUsername(), subject.getEmail()))) {
+        try (Response response = keycloakResourceManager.usersResource(subject.getRealmName()).create(KeycloakMapper.buildUserRepresentation(subject.getUsername(), subject.getEmail(), subject.getUuid()))) {
             if (response.getStatus() / 100 != 2) {
                 throw new RequestRejectedException("user can not be created");
             } else {
