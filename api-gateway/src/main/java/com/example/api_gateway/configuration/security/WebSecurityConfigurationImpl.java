@@ -27,7 +27,6 @@ public class WebSecurityConfigurationImpl implements WebSecurityConfiguration {
     @Override
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
-        System.out.println(http);
         return http.authorizeExchange(exchange ->
                         exchange.pathMatchers("/auth/**").permitAll()
                                 .anyExchange().authenticated())
