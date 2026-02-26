@@ -2,15 +2,18 @@ package com.example.authentication_service.controller.security;
 
 import com.example.authentication_service.controller.advice.handler.ServiceExceptionHandler;
 import com.example.authentication_service.controller.advice.handler.ValidationExceptionHandler;
-import com.example.authentication_service.model.keycloak.RefreshTokenModel;
 import com.example.authentication_service.model.keycloak.TokenResponse;
+import com.example.authentication_service.model.user.AuthenticationResponse;
 import com.example.authentication_service.model.user.UserModel;
 import com.example.authentication_service.model.user.UserRegistrationResponse;
 import com.example.authentication_service.service.AuthenticationService;
 import com.example.authentication_service.service.RegistrationService;
+import com.example.authentication_service.util.mapper.ResponseEntityMapper;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -34,13 +37,16 @@ public class AuthenticationControllerImpl implements AuthenticationController<Us
 
     @Override
     @GetMapping("/login")
-    public ResponseEntity<TokenResponse> login(@Valid @RequestBody UserModel loginModel) {
-        return ResponseEntity.ok(authenticationService.accessToken(loginModel));
+    public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody UserModel loginModel) {
+        TokenResponse tokenResponse = authenticationService.accessToken(loginModel);
+        return ResponseEntityMapper.mapToOk(new AuthenticationResponse(tokenResponse.getAccessToken(), tokenResponse.getExpiresIn()), Map.of("X-Refresh-Token", tokenResponse.getRefreshToken()));
+
     }
 
     @Override
     @GetMapping("/refresh")
-    public ResponseEntity<TokenResponse> refreshToken(@Valid @RequestBody RefreshTokenModel refreshTokenModel) {
-        return ResponseEntity.ok(authenticationService.refreshToken(refreshTokenModel.getToken()));
+    public ResponseEntity<AuthenticationResponse> refreshToken(@RequestHeader("X-Refresh-Token") String refreshToken) {
+        TokenResponse tokenResponse = authenticationService.refreshToken(refreshToken);
+        return ResponseEntityMapper.mapToOk(new AuthenticationResponse(tokenResponse.getAccessToken(), tokenResponse.getExpiresIn()), Map.of("X-Refresh-Token", tokenResponse.getRefreshToken()));
     }
 }
