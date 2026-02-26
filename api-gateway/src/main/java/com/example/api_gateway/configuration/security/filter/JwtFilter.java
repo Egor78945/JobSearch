@@ -1,32 +1,34 @@
 package com.example.api_gateway.configuration.security.filter;
 
+import com.example.api_gateway.configuration.security.converter.JwtMapper;
+import com.example.api_gateway.configuration.security.request.ServerWebExchangeModificator;
 import com.example.api_gateway.model.JwtModel;
-import org.springframework.core.convert.converter.Converter;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class JwtFilter implements WebFilter {
-    private final Converter<Jwt, JwtModel> jwtModelConverter;
-    private final Converter<Jwt, Collection<GrantedAuthority>> authoritiesConverter;
+    private final JwtMapper jwtMapper;
+    private final ServerWebExchangeModificator<ServerWebExchange> serverWebExchangeModificator;
     private final JwtDecoder jwtDecoder;
 
-    public JwtFilter(JwtDecoder jwtDecoder, Converter<Jwt, JwtModel> jwtModelConverter, Converter<Jwt, Collection<GrantedAuthority>> authoritiesConverter) {
-        this.jwtModelConverter = jwtModelConverter;
-        this.authoritiesConverter = authoritiesConverter;
+    public JwtFilter(JwtDecoder jwtDecoder, JwtMapper jwtMapper, ServerWebExchangeModificator<ServerWebExchange> serverWebExchangeModificator) {
+        this.jwtMapper = jwtMapper;
         this.jwtDecoder = jwtDecoder;
+        this.serverWebExchangeModificator = serverWebExchangeModificator;
     }
 
     @Override
@@ -37,10 +39,10 @@ public class JwtFilter implements WebFilter {
                 String tokenString = auth.getFirst().substring("Bearer ".length());
 
                 Jwt token = jwtDecoder.decode(tokenString);
-                JwtModel jwtModel = jwtModelConverter.convert(token);
+                JwtModel jwtModel = jwtMapper.mapTo(token);
 
-                exchange.getRequest().getHeaders().set("X-Account-Uuid", jwtModel.getUser_uuid());
-                return chain.filter(exchange).contextWrite(ReactiveSecurityContextHolder.withAuthentication(new UsernamePasswordAuthenticationToken(jwtModel.getUser_uuid(), null, authoritiesConverter.convert(token))));
+                exchange = serverWebExchangeModificator.modifyRequestHeaders(exchange, new HttpHeaders(MultiValueMap.fromSingleValue(Map.of("X-User-Uuid", jwtModel.getUser_uuid()))));
+                return chain.filter(exchange).contextWrite(ReactiveSecurityContextHolder.withAuthentication(new UsernamePasswordAuthenticationToken(jwtModel.getUser_uuid(), null, jwtMapper.convert(token))));
             }
         } catch (Exception e) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
