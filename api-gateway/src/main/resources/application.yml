@@ -16,6 +16,10 @@ spring:
               predicates:
                 - Path=/auth/**
 
+token:
+  refresh:
+    cookie-lifetime: 30
+
 eureka:
   client:
     service-url:
