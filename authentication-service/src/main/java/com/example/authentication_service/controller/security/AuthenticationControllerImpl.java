@@ -30,9 +30,8 @@ public class AuthenticationControllerImpl implements AuthenticationController<Us
 
     @Override
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody UserModel registerModel) {
+    public void register(@Valid @RequestBody UserModel registerModel) {
         registrationService.register(registerModel);
-        return ResponseEntity.ok().build();
     }
 
     @Override
