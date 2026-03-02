@@ -20,6 +20,16 @@ token:
   refresh:
     cookie-lifetime: 30
 
+
+
+api:
+  authentication-service:
+    token-refresh:
+      path: http://${NGINX_HOST}:${NGINX_PORT_INNER}/api/auth/refresh
+  nginx:
+    host: ${NGINX_HOST}
+    port: ${NGINX_PORT_INNER}
+
 eureka:
   client:
     service-url:
