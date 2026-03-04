@@ -1,7 +1,7 @@
-package com.example.api_gateway.enumeration;
+package com.example.authentication_service.enumeration;
 
 public enum Header {
-    REFRESH_TOKEN_HEADER("X-Refresh-Token"), USER_UUID_HEADER("X-User-Uuid");
+    REFRESH_TOKEN_HEADER("X-Refresh-Token");
     private final String headerName;
 
     Header(String headerName) {

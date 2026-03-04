@@ -56,21 +56,18 @@ public class JwtFilter implements WebFilter {
                 Jwt token;
                 try {
                     token = jwtDecoder.decode(tokenString);
-                    System.out.println("TOKEN IS VALID");
                 } catch (JwtException e) {
-                    System.out.println("BAD TOKEN, TRYING TO GET NEW ONE");
-                    String refresh = exchange.getRequest().getCookies().getFirst("refresh_token").getValue();
+                    String refresh = exchange.getRequest().getCookies().getFirst(Cookie.REFRESH_TOKEN_COOKIE.getCookieName()).getValue();
                     ResponseEntity<AuthenticationResponse> response = tokenManagerService.refreshToken(refresh);
 
-                    serverWebExchangeModificator.modifyResponseCookie(exchange, cookieFactory.createPublic(Cookie.REFRESH_TOKEN_COOKIE.getCookieName(), response.getHeaders().getFirst(Header.REFRESH_TOKEN_HEADER.getHeaderName()), Duration.ofDays(securityEnvironment.getRefreshTokenCookieLifetime())));
+                    exchange = serverWebExchangeModificator.modifyResponseCookie(exchange, cookieFactory.createPublic(Cookie.REFRESH_TOKEN_COOKIE.getCookieName(), response.getHeaders().getFirst(Header.REFRESH_TOKEN_HEADER.getHeaderName()), Duration.ofDays(securityEnvironment.getRefreshTokenCookieLifetime())));
 
                     token = jwtDecoder.decode(response.getBody().getAccessToken());
-                    System.out.println("NEW TOKEN GENERATED");
                 }
 
                 JwtModel jwtModel = jwtMapper.mapTo(token);
 
-                exchange = serverWebExchangeModificator.modifyRequestHeaders(exchange, new HttpHeaders(MultiValueMap.fromSingleValue(Map.of("X-User-Uuid", jwtModel.getUser_uuid(), "Authorization", String.format("Bearer %s", token.getTokenValue())))));
+                exchange = serverWebExchangeModificator.modifyRequestHeaders(exchange, new HttpHeaders(MultiValueMap.fromSingleValue(Map.of(Header.USER_UUID_HEADER.getHeaderName(), jwtModel.getUser_uuid(), "Authorization", String.format("Bearer %s", token.getTokenValue())))));
                 return chain.filter(exchange).contextWrite(ReactiveSecurityContextHolder.withAuthentication(new UsernamePasswordAuthenticationToken(jwtModel.getUser_uuid(), null, jwtMapper.convert(token))));
             }
         } catch (Exception e) {
