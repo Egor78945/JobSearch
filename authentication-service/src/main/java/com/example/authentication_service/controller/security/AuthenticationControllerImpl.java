@@ -2,6 +2,7 @@ package com.example.authentication_service.controller.security;
 
 import com.example.authentication_service.controller.advice.handler.ServiceExceptionHandler;
 import com.example.authentication_service.controller.advice.handler.ValidationExceptionHandler;
+import com.example.authentication_service.enumeration.Header;
 import com.example.authentication_service.model.keycloak.TokenResponse;
 import com.example.authentication_service.model.user.AuthenticationResponse;
 import com.example.authentication_service.model.user.UserModel;
@@ -38,14 +39,14 @@ public class AuthenticationControllerImpl implements AuthenticationController<Us
     @GetMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody UserModel loginModel) {
         TokenResponse tokenResponse = authenticationService.accessToken(loginModel);
-        return ResponseEntityMapper.mapToOk(new AuthenticationResponse(tokenResponse.getAccessToken(), tokenResponse.getExpiresIn()), Map.of("X-Refresh-Token", tokenResponse.getRefreshToken()));
+        return ResponseEntityMapper.mapToOk(new AuthenticationResponse(tokenResponse.getAccessToken(), tokenResponse.getExpiresIn()), Map.of(Header.REFRESH_TOKEN_HEADER.getHeaderName(), tokenResponse.getRefreshToken()));
 
     }
 
     @Override
     @GetMapping("/refresh")
-    public ResponseEntity<AuthenticationResponse> refreshToken(@RequestHeader("X-Refresh-Token") String refreshToken) {
-        TokenResponse tokenResponse = authenticationService.refreshToken(refreshToken);
-        return ResponseEntityMapper.mapToOk(new AuthenticationResponse(tokenResponse.getAccessToken(), tokenResponse.getExpiresIn()), Map.of("X-Refresh-Token", tokenResponse.getRefreshToken()));
+    public ResponseEntity<AuthenticationResponse> refreshToken(@RequestHeader Map<String, String> headers) {
+        TokenResponse tokenResponse = authenticationService.refreshToken(headers.get(Header.REFRESH_TOKEN_HEADER.getHeaderName()));
+        return ResponseEntityMapper.mapToOk(new AuthenticationResponse(tokenResponse.getAccessToken(), tokenResponse.getExpiresIn()), Map.of(Header.REFRESH_TOKEN_HEADER.getHeaderName(), tokenResponse.getRefreshToken()));
     }
 }

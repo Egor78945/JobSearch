@@ -33,6 +33,6 @@ public class RefreshTokenCustomizerFilter implements GlobalFilter, Ordered {
     }
 
     private boolean isProcessable(ServerWebExchange exchange) {
-        return exchange.getRequest().getPath().value().endsWith("/login") && exchange.getResponse().getStatusCode() != null && exchange.getResponse().getStatusCode().is2xxSuccessful();
+        return exchange.getResponse().getStatusCode() != null && exchange.getResponse().getStatusCode().is2xxSuccessful();
     }
 }
