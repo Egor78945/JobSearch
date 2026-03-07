@@ -15,6 +15,10 @@ spring:
               uri: lb://${AUTHENTICATION_SERVICE_HOST}
               predicates:
                 - Path=/auth/**
+            - id: ${VACANCY_MANAGER_SERVICE_HOST}
+              uri: lb://${VACANCY_MANAGER_SERVICE_HOST}
+              predicates:
+                - Path=/vacancy/**
 
 token:
   refresh:
