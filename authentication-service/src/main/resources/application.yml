@@ -34,4 +34,4 @@ keycloak:
         id: admin-cli
 
 server:
-  port: ${AUTHENTICATION_SERVICE_PORT}
+  port: ${AUTHENTICATION_SERVICE_PORT_INNER}

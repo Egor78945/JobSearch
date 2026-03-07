@@ -88,6 +88,19 @@ services:
     env_file:
       - .env
 
+  vacancy-manager-service:
+    container_name: vacancy-manager-service
+    build:
+      context: ../vacancy-manager-service
+      dockerfile: Dockerfile
+      args:
+        JAVA_VERSION: ${JAVA_VERSION}
+    networks:
+      - service
+    restart: no
+    env_file:
+      - .env
+
   api-gateway:
     build:
       context: ../api-gateway

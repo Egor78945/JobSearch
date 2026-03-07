@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: vacancy-manager-service
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${SERVICE_DISCOVERY_HOST}:${SERVICE_DISCOVERY_PORT_INNER}/eureka
+    register-with-eureka: true
+    fetch-registry: true
+
+server:
+  port: ${VACANCY_MANAGER_SERVICE_PORT}
