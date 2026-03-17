@@ -7,7 +7,7 @@ import com.example.authentication_service.model.keycloak.TokenResponse;
 import com.example.authentication_service.model.user.AuthenticationResponse;
 import com.example.authentication_service.model.user.UserModel;
 import com.example.authentication_service.model.user.UserRegistrationResponse;
-import com.example.authentication_service.service.AuthenticationService;
+import com.example.authentication_service.service.TokenManager;
 import com.example.authentication_service.service.RegistrationService;
 import com.example.authentication_service.util.mapper.ResponseEntityMapper;
 import jakarta.validation.Valid;
@@ -22,11 +22,11 @@ import java.util.Map;
 @ServiceExceptionHandler
 public class AuthenticationControllerImpl implements AuthenticationController<UserModel, UserModel> {
     protected final RegistrationService<UserModel, UserRegistrationResponse> registrationService;
-    protected final AuthenticationService<UserModel, String, TokenResponse> authenticationService;
+    protected final TokenManager<UserModel, String, TokenResponse> tokenManager;
 
-    public AuthenticationControllerImpl(RegistrationService<UserModel, UserRegistrationResponse> registrationService, AuthenticationService<UserModel, String, TokenResponse> authenticationService) {
+    public AuthenticationControllerImpl(RegistrationService<UserModel, UserRegistrationResponse> registrationService, TokenManager<UserModel, String, TokenResponse> tokenManager) {
         this.registrationService = registrationService;
-        this.authenticationService = authenticationService;
+        this.tokenManager = tokenManager;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class AuthenticationControllerImpl implements AuthenticationController<Us
     @Override
     @GetMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody UserModel loginModel) {
-        TokenResponse tokenResponse = authenticationService.accessToken(loginModel);
+        TokenResponse tokenResponse = tokenManager.accessToken(loginModel);
         return ResponseEntityMapper.mapToOk(new AuthenticationResponse(tokenResponse.getAccessToken(), tokenResponse.getExpiresIn()), Map.of(Header.REFRESH_TOKEN_HEADER.getHeaderName(), tokenResponse.getRefreshToken()));
 
     }
@@ -46,7 +46,7 @@ public class AuthenticationControllerImpl implements AuthenticationController<Us
     @Override
     @GetMapping("/refresh")
     public ResponseEntity<AuthenticationResponse> refreshToken(@RequestHeader Map<String, String> headers) {
-        TokenResponse tokenResponse = authenticationService.refreshToken(headers.get(Header.REFRESH_TOKEN_HEADER.getHeaderName()));
+        TokenResponse tokenResponse = tokenManager.refreshToken(headers.get(Header.REFRESH_TOKEN_HEADER.getHeaderName()));
         return ResponseEntityMapper.mapToOk(new AuthenticationResponse(tokenResponse.getAccessToken(), tokenResponse.getExpiresIn()), Map.of(Header.REFRESH_TOKEN_HEADER.getHeaderName(), tokenResponse.getRefreshToken()));
     }
 }
