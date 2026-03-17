@@ -4,6 +4,8 @@ import com.example.authentication_service.configuration.keycloak.KeycloakFactory
 import com.example.authentication_service.configuration.keycloak.client.KeycloakClientConfiguration;
 import com.example.authentication_service.configuration.keycloak.environment.KeycloakEnvironment;
 import com.example.authentication_service.model.keycloak.TokenResponse;
+import com.example.authentication_service.model.user.UserModel;
+import com.example.authentication_service.service.TokenManager;
 import com.example.authentication_service.service.keycloak.request.factory.KeycloakTokenRequestFactory;
 import com.example.authentication_service.service.web.WebClientService;
 import org.keycloak.admin.client.Keycloak;
@@ -17,7 +19,7 @@ import org.springframework.util.MultiValueMap;
 import java.net.URI;
 
 @Service
-public class KeycloakTokenManagerImpl implements KeycloakTokenManager<TokenResponse> {
+public class KeycloakTokenManagerImpl implements TokenManager<UserModel, String, TokenResponse> {
     protected final KeycloakFactory keycloakFactory;
     protected final WebClientService webClientService;
     protected final KeycloakEnvironment keycloakEnvironment;
@@ -35,15 +37,15 @@ public class KeycloakTokenManagerImpl implements KeycloakTokenManager<TokenRespo
     }
 
     @Override
-    public TokenResponse accessToken(String username, String password) {
-        try (Keycloak keycloak = keycloakFactory.create(username, password)) {
+    public TokenResponse accessToken(UserModel userModel) {
+        try (Keycloak keycloak = keycloakFactory.create(userModel.getEmail(), userModel.getPassword())) {
             AccessTokenResponse token = keycloak.tokenManager().getAccessToken();
             return new TokenResponse(token.getToken(), token.getRefreshToken(), token.getExpiresIn(), token.getRefreshExpiresIn());
         }
     }
 
     @Override
-    public TokenResponse accessToken(String refreshToken) {
+    public TokenResponse refreshToken(String refreshToken) {
         ClientRepresentation client = keycloakResourceManager.clientRepresentation(keycloakEnvironment.getAuthenticationRealmName(), keycloakEnvironment.getAuthenticationClientId());
 
         URI uri = clientConfiguration.tokenUri(keycloakEnvironment.getAuthenticationRealmName());
