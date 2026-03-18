@@ -1,5 +1,6 @@
 package com.example.authentication_service.controller.security;
 
+import com.example.authentication_service.controller.advice.handler.AuthenticationExceptionHandler;
 import com.example.authentication_service.controller.advice.handler.ServiceExceptionHandler;
 import com.example.authentication_service.controller.advice.handler.ValidationExceptionHandler;
 import com.example.authentication_service.enumeration.Header;
@@ -20,6 +21,7 @@ import java.util.Map;
 @RequestMapping("/auth")
 @ValidationExceptionHandler
 @ServiceExceptionHandler
+@AuthenticationExceptionHandler
 public class AuthenticationControllerImpl implements AuthenticationController<UserModel, UserModel> {
     protected final RegistrationService<UserModel, UserRegistrationResponse> registrationService;
     protected final TokenManager<UserModel, String, TokenResponse> tokenManager;

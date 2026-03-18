@@ -1,6 +1,5 @@
 package com.example.database_manager.controller.grpc;
 
-import com.example.database_manager.exception.ServiceException;
 import com.example.database_manager.service.RegistrationService;
 import com.proto.user.UserProtoAuthenticationServiceGrpc;
 import com.proto.user.UserProtoConfiguration;
@@ -17,11 +16,7 @@ public class GrpcUserAuthenticationController extends UserProtoAuthenticationSer
 
     @Override
     public void register(UserProtoConfiguration.UserRegistrationMessage request, StreamObserver<UserProtoConfiguration.UserRegistrationMessage> responseObserver) {
-        try {
-            responseObserver.onNext(userRegistrationService.register(request));
-            responseObserver.onCompleted();
-        } catch (ServiceException e) {
-            responseObserver.onError(e);
-        }
+        responseObserver.onNext(userRegistrationService.register(request));
+        responseObserver.onCompleted();
     }
 }
