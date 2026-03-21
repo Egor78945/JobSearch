@@ -2,10 +2,11 @@ package com.example.api_gateway.service.web;
 
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-@Service
+@Component
 public class WebClientServiceImpl implements WebClientService {
     protected final RestTemplate restTemplate;
 
