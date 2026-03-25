@@ -9,5 +9,12 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
 
+api:
+  hh:
+    vacancies:
+      uri: https://api.hh.ru/vacancies
+    token:
+      uri: https://api.hh.ru/token
+
 server:
   port: ${VACANCY_MANAGER_SERVICE_PORT}
