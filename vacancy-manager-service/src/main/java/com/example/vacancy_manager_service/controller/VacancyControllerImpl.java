@@ -1,9 +1,9 @@
-package com.example.vacancy_manager_service.service;
+package com.example.vacancy_manager_service.controller;
 
 import com.example.vacancy_manager_service.configuration.HeadHunterEnvironment;
-import com.example.vacancy_manager_service.enumeration.HeadHunterVacancyParameter;
 import com.example.vacancy_manager_service.model.HeadHunterAuthorizationResponse;
 import com.example.vacancy_manager_service.model.HeadHunterVacancyResponse;
+import com.example.vacancy_manager_service.service.VacancyService;
 import com.example.vacancy_manager_service.service.api.HeadHunterApiManager;
 import com.example.vacancy_manager_service.service.util.UriUtilities;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,11 +16,13 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/vacancy")
-public class VacancyController implements VacancyService<HeadHunterVacancyResponse> {
-    private final HeadHunterApiManager headHunterApiManager;
+public class VacancyControllerImpl implements VacancyController<HeadHunterVacancyResponse> {
+    private final VacancyService<HeadHunterVacancyResponse> vacancyService;
     private final HeadHunterEnvironment headHunterEnvironment;
+    private final HeadHunterApiManager headHunterApiManager;
 
-    public VacancyController(HeadHunterApiManager headHunterApiManager, HeadHunterEnvironment headHunterEnvironment) {
+    public VacancyControllerImpl(HeadHunterApiManager headHunterApiManager, VacancyService<HeadHunterVacancyResponse> vacancyService, HeadHunterEnvironment headHunterEnvironment) {
+        this.vacancyService = vacancyService;
         this.headHunterApiManager = headHunterApiManager;
         this.headHunterEnvironment = headHunterEnvironment;
     }
@@ -32,6 +34,6 @@ public class VacancyController implements VacancyService<HeadHunterVacancyRespon
 
     @GetMapping("/search")
     public HeadHunterVacancyResponse findByParameters(@RequestParam Map<String, String> parameters) {
-        return headHunterApiManager.vacancySearch(HeadHunterVacancyParameter.mapFromString(UriUtilities.encodeParams(parameters, StandardCharsets.UTF_8)));
+        return vacancyService.searchVacancy(UriUtilities.encodeParams(parameters, StandardCharsets.UTF_8));
     }
 }
