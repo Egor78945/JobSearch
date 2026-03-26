@@ -7,6 +7,6 @@ import com.example.vacancy_manager_service.model.HeadHunterVacancyResponse;
 import java.util.Map;
 
 public interface HeadHunterApiManager {
-    HeadHunterVacancyResponse vacancySearch(Map<HeadHunterVacancyParameter, String> parameters);
+    HeadHunterVacancyResponse vacancySearch(String accessToken, Map<HeadHunterVacancyParameter, String> parameters);
     HeadHunterAuthorizationResponse authorize(String clientId, String clientSecret);
 }

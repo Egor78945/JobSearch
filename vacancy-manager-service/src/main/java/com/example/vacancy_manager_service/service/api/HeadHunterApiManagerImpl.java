@@ -28,15 +28,16 @@ public class HeadHunterApiManagerImpl implements HeadHunterApiManager {
     }
 
     @Override
-    public HeadHunterVacancyResponse vacancySearch(Map<HeadHunterVacancyParameter, String> parameters) {
-        HttpHeaders headers = new HttpHeaders(MultiValueMap.fromSingleValue(Map.of("Authorization", String.format("Bearer %s", "..."))));
+    public HeadHunterVacancyResponse vacancySearch(String accessToken, Map<HeadHunterVacancyParameter, String> parameters) {
+        HttpHeaders headers = new HttpHeaders(MultiValueMap.fromSingleValue(Map.of(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", accessToken))));
         RequestEntity<Void> request = requestEntityBuilder.build(HttpMethod.GET, headers, HeadHunterVacancyParameter.mapToString(parameters), headHunterEnvironment.getHEAD_HUNTER_API_VACANCIES());
         return webClientService.exchange(request, HeadHunterVacancyResponse.class).getBody();
     }
 
     @Override
     public HeadHunterAuthorizationResponse authorize(String clientId, String clientSecret) {
-        HttpHeaders headers = new HttpHeaders(MultiValueMap.fromSingleValue(Map.of("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE)));
-        return webClientService.exchange(requestEntityBuilder.build(MultiValueMap.fromSingleValue(Map.of("grant_type", "client_credentials", "client_id", clientId, "client_secret", clientSecret)), HttpMethod.POST, headers, headHunterEnvironment.getHEAD_HUNTER_API_TOKEN()), HeadHunterAuthorizationResponse.class).getBody();
+        HttpHeaders headers = new HttpHeaders(MultiValueMap.fromSingleValue(Map.of(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)));
+        RequestEntity<MultiValueMap<String, String>> request = requestEntityBuilder.build(MultiValueMap.fromSingleValue(Map.of("grant_type", "client_credentials", "client_id", clientId, "client_secret", clientSecret)), HttpMethod.POST, headers, headHunterEnvironment.getHEAD_HUNTER_API_TOKEN());
+        return webClientService.exchange(request, HeadHunterAuthorizationResponse.class).getBody();
     }
 }
