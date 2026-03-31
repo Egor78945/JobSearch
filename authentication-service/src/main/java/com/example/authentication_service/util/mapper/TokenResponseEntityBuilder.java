@@ -6,6 +6,7 @@ import com.example.authentication_service.model.user.AuthenticationResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
+import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
@@ -15,5 +16,10 @@ public class TokenResponseEntityBuilder {
         return ResponseEntity.ok()
                 .headers(new HttpHeaders(MultiValueMap.fromSingleValue(Map.of(Header.REFRESH_TOKEN_HEADER.getHeaderName(), tokenResponse.getRefreshToken()))))
                 .body(new AuthenticationResponse(tokenResponse.getAccessToken(), tokenResponse.getExpiresIn()));
+    }
+    public static Mono<ResponseEntity<AuthenticationResponse>> buildToOk(Mono<TokenResponse> tokenResponse) {
+       return tokenResponse.map(r -> ResponseEntity.ok()
+                .headers(new HttpHeaders(MultiValueMap.fromSingleValue(Map.of(Header.REFRESH_TOKEN_HEADER.getHeaderName(), r.getRefreshToken()))))
+                .body(new AuthenticationResponse(r.getAccessToken(), r.getExpiresIn())));
     }
 }

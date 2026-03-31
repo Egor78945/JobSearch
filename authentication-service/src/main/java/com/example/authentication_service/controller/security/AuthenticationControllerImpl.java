@@ -14,6 +14,7 @@ import com.example.authentication_service.util.mapper.TokenResponseEntityBuilder
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
@@ -24,9 +25,9 @@ import java.util.Map;
 @AuthenticationExceptionHandler
 public class AuthenticationControllerImpl implements AuthenticationController<UserModel, UserModel> {
     protected final RegistrationService<UserModel, UserRegistrationResponse> registrationService;
-    protected final TokenManager<UserModel, String, TokenResponse> tokenManager;
+    protected final TokenManager<UserModel, String, Mono<TokenResponse>> tokenManager;
 
-    public AuthenticationControllerImpl(RegistrationService<UserModel, UserRegistrationResponse> registrationService, TokenManager<UserModel, String, TokenResponse> tokenManager) {
+    public AuthenticationControllerImpl(RegistrationService<UserModel, UserRegistrationResponse> registrationService, TokenManager<UserModel, String, Mono<TokenResponse>> tokenManager) {
         this.registrationService = registrationService;
         this.tokenManager = tokenManager;
     }
@@ -39,14 +40,16 @@ public class AuthenticationControllerImpl implements AuthenticationController<Us
 
     @Override
     @GetMapping("/login")
-    public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody UserModel loginModel) {
-        return TokenResponseEntityBuilder.buildToOk(tokenManager.accessToken(loginModel));
+    public Mono<ResponseEntity<AuthenticationResponse>> login(@Valid @RequestBody UserModel loginModel) {
+        return tokenManager.accessToken(loginModel)
+                .map(TokenResponseEntityBuilder::buildToOk);
 
     }
 
     @Override
     @GetMapping("/refresh")
-    public ResponseEntity<AuthenticationResponse> refreshToken(@RequestHeader Map<String, String> headers) {
-        return TokenResponseEntityBuilder.buildToOk(tokenManager.refreshToken(headers.get(Header.REFRESH_TOKEN_HEADER.getHeaderName())));
+    public Mono<ResponseEntity<AuthenticationResponse>> refreshToken(@RequestHeader Map<String, String> headers) {
+        return tokenManager.refreshToken(headers.get(Header.REFRESH_TOKEN_HEADER.getHeaderName()))
+                .map(TokenResponseEntityBuilder::buildToOk);
     }
 }

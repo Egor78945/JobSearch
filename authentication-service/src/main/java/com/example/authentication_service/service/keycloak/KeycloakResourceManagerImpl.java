@@ -5,6 +5,7 @@ import com.example.authentication_service.exception.NotFoundException;
 import com.example.authentication_service.model.keycloak.KeycloakAdminModel;
 import org.keycloak.admin.client.resource.ClientsResource;
 import org.keycloak.admin.client.resource.GroupsResource;
+import org.keycloak.admin.client.resource.RealmsResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.GroupRepresentation;
@@ -25,18 +26,23 @@ public class KeycloakResourceManagerImpl implements KeycloakResourceManager {
     }
 
     @Override
+    public RealmsResource realmsResource() {
+        return keycloakAdmin.getKeycloak().realms();
+    }
+
+    @Override
     public UsersResource usersResource(String realmName) {
-        return keycloakAdmin.getKeycloak().realm(realmName).users();
+        return realmsResource().realm(realmName).users();
     }
 
     @Override
     public GroupsResource groupsResource(String realmName) {
-        return keycloakAdmin.getKeycloak().realm(realmName).groups();
+        return realmsResource().realm(realmName).groups();
     }
 
     @Override
     public ClientsResource clientsResource(String realmName) {
-        return keycloakAdmin.getKeycloak().realm(realmName).clients();
+        return realmsResource().realm(realmName).clients();
     }
 
     @Override
