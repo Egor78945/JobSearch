@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserKeycloakRegistrationService implements RegistrationService<KeycloakUserModel, KeycloakUserModel> {
-    protected final KeycloakService<KeycloakUserModel> keycloakService;
+    protected final KeycloakService<KeycloakUserModel, String> keycloakService;
     protected final KeycloakEnvironment keycloakEnvironment;
 
-    public UserKeycloakRegistrationService(KeycloakService<KeycloakUserModel> keycloakService, KeycloakEnvironment keycloakEnvironment) {
+    public UserKeycloakRegistrationService(KeycloakService<KeycloakUserModel, String> keycloakService, KeycloakEnvironment keycloakEnvironment) {
         this.keycloakService = keycloakService;
         this.keycloakEnvironment = keycloakEnvironment;
     }

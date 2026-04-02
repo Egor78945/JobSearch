@@ -1,14 +1,16 @@
 package com.example.authentication_service.service.keycloak;
 
 import com.example.authentication_service.configuration.keycloak.environment.KeycloakEnvironment;
+import com.example.authentication_service.exception.RequestRejectedException;
 import com.example.authentication_service.model.keycloak.KeycloakAdminModel;
 import org.keycloak.admin.client.resource.*;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -23,7 +25,9 @@ public class ReactiveKeycloakResourceManagerImpl implements ReactiveKeycloakReso
 
     @Override
     public Mono<RealmsResource> realmsResource() {
-        return Mono.fromCallable(() -> keycloakAdmin.getKeycloak().realms());
+        return Mono.fromCallable(() -> keycloakAdmin.getKeycloak().realms())
+                .subscribeOn(Schedulers.boundedElastic())
+                .onErrorMap(e -> new RequestRejectedException("failed to get keycloak realms"));
     }
 
     @Override
@@ -54,13 +58,16 @@ public class ReactiveKeycloakResourceManagerImpl implements ReactiveKeycloakReso
     @Override
     public Mono<List<GroupRepresentation>> groupRepresentation(String realmName, String[] groupName) {
         return groupsResource(realmName)
-                .map(gr -> Arrays.stream(groupName)
-                        .map(gr::group)
-                        .map(GroupResource::toRepresentation)
-                        .toList());
+                .flatMap(gr -> Flux.fromArray(groupName)
+                        .flatMap(gn -> groupRepresentation(realmName, gn))
+                        .collectList()
+                        .subscribeOn(Schedulers.boundedElastic())
+                );
     }
 
     private Mono<RealmResource> realmResource(String realmName) {
-        return Mono.fromCallable(() -> keycloakAdmin.getKeycloak().realm(realmName));
+        return Mono.fromCallable(() -> keycloakAdmin.getKeycloak().realm(realmName))
+                .subscribeOn(Schedulers.boundedElastic())
+                .onErrorMap(e -> new RequestRejectedException("failed to get keycloak realms"));
     }
 }
