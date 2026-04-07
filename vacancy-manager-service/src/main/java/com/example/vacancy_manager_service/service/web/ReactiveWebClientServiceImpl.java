@@ -18,10 +18,14 @@ public class ReactiveWebClientServiceImpl implements ReactiveWebClientService {
 
     @Override
     public <C> Mono<ResponseEntity<C>> exchange(RequestEntity<?> httpEntity, Class<C> clazz) {
-        return webClient.method(httpEntity.getMethod() == null ? HttpMethod.GET : httpEntity.getMethod())
+        WebClient.RequestBodySpec request = webClient.method(httpEntity.getMethod() == null ? HttpMethod.GET : httpEntity.getMethod())
                 .uri(httpEntity.getUrl())
-                .headers(h -> h.addAll(httpEntity.getHeaders()))
-                .bodyValue(httpEntity.getBody())
+                .headers(h -> h.addAll(httpEntity.getHeaders()));
+
+        if (httpEntity.getBody() != null) {
+            request.bodyValue(httpEntity.getBody());
+        }
+        return request
                 .retrieve()
                 .toEntity(clazz)
                 .doOnError(Throwable::printStackTrace)
