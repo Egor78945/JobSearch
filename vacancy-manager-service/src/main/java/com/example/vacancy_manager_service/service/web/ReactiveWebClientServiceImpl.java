@@ -1,10 +1,12 @@
 package com.example.vacancy_manager_service.service.web;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Component
 public class ReactiveWebClientServiceImpl implements ReactiveWebClientService {
@@ -16,11 +18,17 @@ public class ReactiveWebClientServiceImpl implements ReactiveWebClientService {
 
     @Override
     public <C> Mono<ResponseEntity<C>> exchange(RequestEntity<?> httpEntity, Class<C> clazz) {
-        return webClient.get()
+        WebClient.RequestBodySpec request = webClient.method(httpEntity.getMethod() == null ? HttpMethod.GET : httpEntity.getMethod())
                 .uri(httpEntity.getUrl())
-                .headers(h -> h.addAll(httpEntity.getHeaders()))
+                .headers(h -> h.addAll(httpEntity.getHeaders()));
+
+        if (httpEntity.getBody() != null) {
+            request.bodyValue(httpEntity.getBody());
+        }
+        return request
                 .retrieve()
                 .toEntity(clazz)
-                .doOnError(Throwable::printStackTrace);
+                .doOnError(Throwable::printStackTrace)
+                .subscribeOn(Schedulers.boundedElastic());
     }
 }
