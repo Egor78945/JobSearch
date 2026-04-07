@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class KeycloakServiceImpl implements KeycloakService<KeycloakUserModel>{
+public class KeycloakServiceImpl implements KeycloakService<KeycloakUserModel, String>{
     protected KeycloakResourceManager keycloakResourceManager;
     protected final KeycloakEnvironment keycloakEnvironment;
 
