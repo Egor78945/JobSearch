@@ -24,18 +24,18 @@ import java.util.Map;
 @ServiceExceptionHandler
 @AuthenticationExceptionHandler
 public class AuthenticationControllerImpl implements AuthenticationController<UserModel, UserModel> {
-    protected final RegistrationService<UserModel, UserRegistrationResponse> registrationService;
+    protected final RegistrationService<UserModel, Mono<UserRegistrationResponse>> registrationService;
     protected final TokenManager<UserModel, String, Mono<TokenResponse>> tokenManager;
 
-    public AuthenticationControllerImpl(RegistrationService<UserModel, UserRegistrationResponse> registrationService, TokenManager<UserModel, String, Mono<TokenResponse>> tokenManager) {
+    public AuthenticationControllerImpl(RegistrationService<UserModel, Mono<UserRegistrationResponse>> registrationService, TokenManager<UserModel, String, Mono<TokenResponse>> tokenManager) {
         this.registrationService = registrationService;
         this.tokenManager = tokenManager;
     }
 
     @Override
     @PostMapping("/register")
-    public void register(@Valid @RequestBody UserModel registerModel) {
-        registrationService.register(registerModel);
+    public Mono<UserRegistrationResponse> register(@Valid @RequestBody UserModel registerModel) {
+        return registrationService.register(registerModel);
     }
 
     @Override

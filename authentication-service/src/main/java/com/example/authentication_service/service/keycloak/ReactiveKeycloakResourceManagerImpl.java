@@ -1,6 +1,7 @@
 package com.example.authentication_service.service.keycloak;
 
 import com.example.authentication_service.configuration.keycloak.environment.KeycloakEnvironment;
+import com.example.authentication_service.exception.NotFoundException;
 import com.example.authentication_service.exception.RequestRejectedException;
 import com.example.authentication_service.model.keycloak.KeycloakAdminModel;
 import org.keycloak.admin.client.resource.*;
@@ -27,7 +28,7 @@ public class ReactiveKeycloakResourceManagerImpl implements ReactiveKeycloakReso
     public Mono<RealmsResource> realmsResource() {
         return Mono.fromCallable(() -> keycloakAdmin.getKeycloak().realms())
                 .subscribeOn(Schedulers.boundedElastic())
-                .onErrorMap(e -> new RequestRejectedException("failed to get keycloak realms"));
+                .onErrorMap(e -> new RequestRejectedException("failed to get keycloak realms: " + e.getMessage()));
     }
 
     @Override
@@ -47,27 +48,34 @@ public class ReactiveKeycloakResourceManagerImpl implements ReactiveKeycloakReso
 
     @Override
     public Mono<ClientRepresentation> clientRepresentation(String realmName, String clientId) {
-        return realmResource(realmName).map(RealmResource::clients).map(c -> c.findByClientId(clientId).getFirst());
+        return clientsResource(realmName).flatMap(c -> Mono.fromCallable(() -> c.findByClientId(clientId).getFirst())
+                .subscribeOn(Schedulers.boundedElastic()));
     }
 
     @Override
     public Mono<GroupRepresentation> groupRepresentation(String realmName, String groupName) {
-        return realmResource(realmName).map(RealmResource::groups).map(g -> g.group(groupName).toRepresentation());
+        return groupsResource(realmName)
+                .flatMap(g -> Flux.fromIterable(g.groups())
+                        .filter(group -> group.getName().equals(groupName))
+                        .collectList()
+                        .subscribeOn(Schedulers.boundedElastic()))
+                .map(List::getFirst)
+                .switchIfEmpty(Mono.error(new NotFoundException("unknown group: " + groupName)));
+
     }
 
     @Override
     public Mono<List<GroupRepresentation>> groupRepresentation(String realmName, String[] groupName) {
-        return groupsResource(realmName)
-                .flatMap(gr -> Flux.fromArray(groupName)
-                        .flatMap(gn -> groupRepresentation(realmName, gn))
-                        .collectList()
-                        .subscribeOn(Schedulers.boundedElastic())
-                );
+        return Flux.fromArray(groupName)
+                .flatMap(gn -> groupRepresentation(realmName, gn))
+                .subscribeOn(Schedulers.boundedElastic())
+                .collectList();
     }
 
     private Mono<RealmResource> realmResource(String realmName) {
-        return Mono.fromCallable(() -> keycloakAdmin.getKeycloak().realm(realmName))
+        return realmsResource()
+                .flatMap(r -> Mono.fromCallable(() -> r.realm(realmName)))
                 .subscribeOn(Schedulers.boundedElastic())
-                .onErrorMap(e -> new RequestRejectedException("failed to get keycloak realms"));
+                .onErrorMap(e -> new RequestRejectedException("failed to get keycloak realms: " + e.getMessage()));
     }
 }

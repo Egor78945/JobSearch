@@ -3,16 +3,19 @@ package com.example.authentication_service.service.keycloak;
 import com.example.authentication_service.configuration.keycloak.ReactiveKeycloakFactory;
 import com.example.authentication_service.configuration.keycloak.client.KeycloakClientConfiguration;
 import com.example.authentication_service.configuration.keycloak.environment.KeycloakEnvironment;
+import com.example.authentication_service.exception.AuthenticationException;
 import com.example.authentication_service.model.keycloak.TokenResponse;
 import com.example.authentication_service.model.user.UserModel;
 import com.example.authentication_service.service.TokenManager;
 import com.example.authentication_service.service.keycloak.request.factory.KeycloakTokenRequestFactory;
 import com.example.authentication_service.service.web.ReactiveWebClientService;
+import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Service
 public class ReactiveKeycloakTokenManagerImpl implements TokenManager<UserModel, String, Mono<TokenResponse>> {
@@ -35,9 +38,11 @@ public class ReactiveKeycloakTokenManagerImpl implements TokenManager<UserModel,
     @Override
     public Mono<TokenResponse> accessToken(UserModel userModel) {
         return keycloakFactory.create(userModel.getEmail(), userModel.getPassword())
-                .map(k -> k.tokenManager().getAccessToken())
+                .flatMap(k -> Mono.fromCallable(() -> k.tokenManager().getAccessToken())
+                        .subscribeOn(Schedulers.boundedElastic()))
                 .map(token ->
-                        new TokenResponse(token.getToken(), token.getRefreshToken(), token.getExpiresIn(), token.getRefreshExpiresIn()));
+                        new TokenResponse(token.getToken(), token.getRefreshToken(), token.getExpiresIn(), token.getRefreshExpiresIn()))
+                .onErrorMap(e -> new AuthenticationException(String.format("failed to get access-token: %s", e.getMessage())));
     }
 
     @Override
@@ -46,6 +51,7 @@ public class ReactiveKeycloakTokenManagerImpl implements TokenManager<UserModel,
                 .map(client -> tokenRequestFactory.refreshTokenRequest(client.getClientId(), client.getSecret(), refreshToken))
                 .flatMap(request -> webClientService.exchange(new RequestEntity<>(request.getBody(), request.getHeaders(), HttpMethod.POST, clientConfiguration.tokenUri(keycloakEnvironment.getAuthenticationRealmName())), TokenResponse.class))
                 .mapNotNull(HttpEntity::getBody)
-                .switchIfEmpty(Mono.error(new IllegalArgumentException("empty response")));
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("empty refresh-token response")))
+                .onErrorMap(e -> new AuthenticationException(String.format("failed to get access-token: %s", e.getMessage())));
     }
 }

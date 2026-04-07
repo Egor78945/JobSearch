@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Component
 public class ReactiveWebClientServiceImpl implements ReactiveWebClientService {
@@ -23,6 +24,7 @@ public class ReactiveWebClientServiceImpl implements ReactiveWebClientService {
                 .bodyValue(httpEntity.getBody())
                 .retrieve()
                 .toEntity(clazz)
-                .doOnError(Throwable::printStackTrace);
+                .doOnError(Throwable::printStackTrace)
+                .subscribeOn(Schedulers.boundedElastic());
     }
 }

@@ -7,6 +7,7 @@ import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Component
 public class ReactiveKeycloakFactoryImpl implements ReactiveKeycloakFactory {
@@ -21,15 +22,16 @@ public class ReactiveKeycloakFactoryImpl implements ReactiveKeycloakFactory {
     @Override
     public Mono<Keycloak> create(String username, String password) {
         return keycloakResourceManager.clientRepresentation(keycloakEnvironment.getAuthenticationRealmName(), keycloakEnvironment.getAuthenticationClientId())
-                .map(client -> KeycloakBuilder
-                        .builder()
-                        .serverUrl(String.format("http://%s:%s", keycloakEnvironment.getKeycloakServerHost(), keycloakEnvironment.getKeycloakServerPort()))
-                        .realm(keycloakEnvironment.getAuthenticationRealmName())
-                        .username(username)
-                        .password(password)
-                        .clientId(client.getClientId())
-                        .clientSecret(client.getSecret())
-                        .grantType(OAuth2Constants.PASSWORD)
-                        .build());
+                .flatMap(client -> Mono.fromCallable(() -> KeycloakBuilder
+                                .builder()
+                                .serverUrl(String.format("http://%s:%s", keycloakEnvironment.getKeycloakServerHost(), keycloakEnvironment.getKeycloakServerPort()))
+                                .realm(keycloakEnvironment.getAuthenticationRealmName())
+                                .username(username)
+                                .password(password)
+                                .clientId(client.getClientId())
+                                .clientSecret(client.getSecret())
+                                .grantType(OAuth2Constants.PASSWORD)
+                                .build())
+                        .subscribeOn(Schedulers.boundedElastic()));
     }
 }
