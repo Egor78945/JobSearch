@@ -24,7 +24,6 @@ public class ReactiveKeycloakServiceImpl implements ReactiveKeycloakService<Keyc
 
     @Override
     public Mono<String> createUser(KeycloakUserModel subject) {
-        System.out.println(subject);
         return keycloakResourceManager.usersResource(subject.getRealmName())
                 .flatMap(u -> Mono.fromCallable(() -> u.create(KeycloakMapper.buildUserRepresentation(subject.getUsername(), subject.getEmail(), subject.getUuid())))
                         .subscribeOn(Schedulers.boundedElastic()))
@@ -49,19 +48,14 @@ public class ReactiveKeycloakServiceImpl implements ReactiveKeycloakService<Keyc
 
     @Override
     public Mono<Void> joinGroup(KeycloakUserModel keycloakUserModel) {
-        System.out.println("join group: " + keycloakUserModel);
         return keycloakResourceManager.groupRepresentation(keycloakUserModel.getRealmName(), keycloakUserModel.getGroups())
-                .flatMap(l -> {
-                    System.out.println("HEREEEE");
-                    return Flux.fromIterable(l)
-                            .flatMap(g -> joinGroup(keycloakUserModel, g))
-                        .then();
-                })
+                .flatMap(l -> Flux.fromIterable(l)
+                        .flatMap(g -> joinGroup(keycloakUserModel, g))
+                    .then())
                 .then();
     }
 
     private Mono<Void> joinGroup(KeycloakUserModel keycloakUserModel, GroupRepresentation groupRepresentation) {
-        System.out.println("join group2: " + keycloakUserModel);
         return keycloakResourceManager.usersResource(keycloakUserModel.getRealmName())
                 .flatMap(r -> Mono.fromRunnable(() -> {
                             UserResource ur = r.get(keycloakUserModel.getUserId());
