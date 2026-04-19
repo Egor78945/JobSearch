@@ -74,8 +74,8 @@ public class ReactiveKeycloakResourceManagerImpl implements ReactiveKeycloakReso
 
     private Mono<RealmResource> realmResource(String realmName) {
         return realmsResource()
-                .flatMap(r -> Mono.fromCallable(() -> r.realm(realmName)))
-                .subscribeOn(Schedulers.boundedElastic())
-                .onErrorMap(e -> new RequestRejectedException("failed to get keycloak realms: " + e.getMessage()));
+                .flatMap(r -> Mono.fromCallable(() -> r.realm(realmName))
+                        .subscribeOn(Schedulers.boundedElastic()))
+                .onErrorMap(e -> new RequestRejectedException("failed to get realm resource", e));
     }
 }

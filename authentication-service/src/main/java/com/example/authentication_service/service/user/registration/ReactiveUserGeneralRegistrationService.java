@@ -1,6 +1,7 @@
 package com.example.authentication_service.service.user.registration;
 
-import com.example.authentication_service.exception.AuthenticationException;
+import com.example.authentication_service.exception.FailedOperationException;
+import com.example.authentication_service.exception.RegistrationException;
 import com.example.authentication_service.model.keycloak.KeycloakUserModel;
 import com.example.authentication_service.model.user.UserModel;
 import com.example.authentication_service.model.user.UserRegistrationResponse;
@@ -9,7 +10,6 @@ import com.example.authentication_service.service.user.common.ReactiveCommonUser
 import com.proto.user.UserProtoConfiguration;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 @Service
 public class ReactiveUserGeneralRegistrationService implements RegistrationService<UserModel, Mono<UserRegistrationResponse>> {
@@ -28,7 +28,8 @@ public class ReactiveUserGeneralRegistrationService implements RegistrationServi
         return userProtoRegistrationService.register(registerRequest)
                 .flatMap(r -> keycloakService.register(new KeycloakUserModel(registerRequest.getEmail(), registerRequest.getEmail(), r.getUuid(), registerRequest.getPassword())))
                 .onErrorResume(e -> reactiveCommonUserService.deleteByEmail(registerRequest.getEmail())
-                        .then(Mono.error(new AuthenticationException("failed to register a user to keycloak: " + e.getMessage()))))
+                        .onErrorMap(e2 -> new FailedOperationException("could not to roll back failed registration in the database", e2))
+                        .then(Mono.error(new RegistrationException("user registration in keycloak has been rolled back"))))
                 .map(k -> new UserRegistrationResponse(k.getUuid(), k.getUserId()));
 
     }

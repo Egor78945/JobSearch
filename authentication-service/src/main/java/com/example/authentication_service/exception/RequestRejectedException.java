@@ -4,4 +4,8 @@ public class RequestRejectedException extends ServiceException {
     public RequestRejectedException(String message) {
         super(message);
     }
+
+    public RequestRejectedException(String text, Throwable e) {
+        super(text, e);
+    }
 }

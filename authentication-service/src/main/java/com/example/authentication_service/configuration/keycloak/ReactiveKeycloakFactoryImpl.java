@@ -1,6 +1,7 @@
 package com.example.authentication_service.configuration.keycloak;
 
 import com.example.authentication_service.configuration.keycloak.environment.KeycloakEnvironment;
+import com.example.authentication_service.exception.AuthenticationException;
 import com.example.authentication_service.service.keycloak.ReactiveKeycloakResourceManager;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
@@ -32,6 +33,7 @@ public class ReactiveKeycloakFactoryImpl implements ReactiveKeycloakFactory {
                                 .clientSecret(client.getSecret())
                                 .grantType(OAuth2Constants.PASSWORD)
                                 .build())
+                        .onErrorMap(e -> new AuthenticationException("user is unauthorized or could not authorize the user", e))
                         .subscribeOn(Schedulers.boundedElastic()));
     }
 }

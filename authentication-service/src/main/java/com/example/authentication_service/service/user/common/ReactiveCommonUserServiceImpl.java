@@ -1,5 +1,6 @@
 package com.example.authentication_service.service.user.common;
 
+import com.example.authentication_service.exception.FailedOperationException;
 import com.example.authentication_service.service.user.grpc.client.UserGrpcClientService;
 import com.example.authentication_service.util.mapper.GrpcMapper;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ public class ReactiveCommonUserServiceImpl implements ReactiveCommonUserService 
     @Override
     public Mono<Void> deleteByEmail(String email) {
         return Mono.fromRunnable(() -> userGrpcClientService.deleteByEmail(GrpcMapper.mapTo(email)))
+                .onErrorMap(e -> new FailedOperationException("could not to delete user from the database", e))
                 .subscribeOn(Schedulers.boundedElastic())
                 .then();
     }
