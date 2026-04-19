@@ -1,6 +1,8 @@
 package com.example.authentication_service.service.web;
 
+import com.example.authentication_service.exception.WebClientException;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -28,7 +30,7 @@ public class ReactiveWebClientServiceImpl implements ReactiveWebClientService {
         return request
                 .retrieve()
                 .toEntity(clazz)
-                .doOnError(Throwable::printStackTrace)
+                .onErrorMap(e -> new WebClientException("error while sending http request", HttpStatus.INTERNAL_SERVER_ERROR.value(), e))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 }

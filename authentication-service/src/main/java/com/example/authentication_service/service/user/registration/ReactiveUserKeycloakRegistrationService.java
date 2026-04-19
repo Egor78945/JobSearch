@@ -2,6 +2,7 @@ package com.example.authentication_service.service.user.registration;
 
 import com.example.authentication_service.configuration.keycloak.environment.KeycloakEnvironment;
 import com.example.authentication_service.enumeration.KeycloakRealmGroup;
+import com.example.authentication_service.exception.RegistrationException;
 import com.example.authentication_service.model.keycloak.KeycloakUserModel;
 import com.example.authentication_service.service.RegistrationService;
 import com.example.authentication_service.service.keycloak.ReactiveKeycloakService;
@@ -28,7 +29,8 @@ public class ReactiveUserKeycloakRegistrationService implements RegistrationServ
                     registerModel.setUserId(id);
                     return registerModel;
                 })
-                .flatMapMany(r -> Flux.concat(keycloakService.resetPassword(r), keycloakService.joinGroup(r)))
+                .flatMapMany(r -> Flux.concat(keycloakService.resetPassword(r), keycloakService.joinGroup(r))
+                        .onErrorMap(e -> new RegistrationException("failed to reset password of the user or add him to a group", e)))
                 .then(Mono.just(registerModel));
     }
 }

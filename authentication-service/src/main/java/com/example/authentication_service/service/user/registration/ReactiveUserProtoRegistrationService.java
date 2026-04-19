@@ -2,6 +2,7 @@ package com.example.authentication_service.service.user.registration;
 
 import com.example.authentication_service.enumeration.UserRole;
 import com.example.authentication_service.enumeration.UserStatus;
+import com.example.authentication_service.exception.RegistrationException;
 import com.example.authentication_service.model.user.UserModel;
 import com.example.authentication_service.service.RegistrationService;
 import com.example.authentication_service.service.user.grpc.client.UserAuthenticationGrpcClientService;
@@ -28,6 +29,7 @@ public class ReactiveUserProtoRegistrationService implements RegistrationService
         UserProtoConfiguration.UserRegistrationMessage userRegistrationMessage = UserMapper.mapTo(userMessage, List.of(UserRole.ROLE_USER.getId()));
 
         return Mono.fromCallable(() -> grpcClientService.register(userRegistrationMessage).getUserMessage())
-                .subscribeOn(Schedulers.boundedElastic());
+                .subscribeOn(Schedulers.boundedElastic())
+                .onErrorMap(e -> new RegistrationException("failed to save the user in the database", e));
     }
 }
