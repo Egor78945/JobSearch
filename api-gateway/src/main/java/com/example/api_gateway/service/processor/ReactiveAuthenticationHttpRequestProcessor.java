@@ -56,7 +56,8 @@ public class ReactiveAuthenticationHttpRequestProcessor implements ReactiveHttpR
 
     private Mono<String> extractAuthorization(ServerWebExchange exchange) {
         return Mono
-                .justOrEmpty(Optional.ofNullable(exchange.getRequest().getHeaders().get(Header.AUTHORIZATION_HEADER.getHeaderName())))
+                .justOrEmpty(exchange.getRequest().getHeaders().get(Header.AUTHORIZATION_HEADER.getHeaderName()))
+                .switchIfEmpty(Mono.error(new JwtException("Missing authentication token")))
                 .filter(h -> !h.isEmpty() && h.getFirst().startsWith("Bearer "))
                 .map(a -> a.getFirst().substring("Bearer ".length()));
     }
