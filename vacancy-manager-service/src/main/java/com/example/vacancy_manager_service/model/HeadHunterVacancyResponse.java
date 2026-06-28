@@ -37,12 +37,22 @@ public class HeadHunterVacancyResponse implements Serializable {
         private Area area;
         private Salary salary;
         private Address address;
+        private String published_at;
+        private WorkFormat[] work_format;
+        private Experience experience;
+        private EmploymentForm employment_form;
+        private boolean internship;
 
-        public Item(String name, Area area, Salary salary, Address address) {
+        public Item(String name, Area area, Salary salary, Address address, String published_at, WorkFormat[] work_format, Experience experience, EmploymentForm employment_form, boolean internship) {
             this.name = name;
             this.area = area;
             this.salary = salary;
             this.address = address;
+            this.published_at = published_at;
+            this.work_format = work_format;
+            this.experience = experience;
+            this.employment_form = employment_form;
+            this.internship = internship;
         }
 
         public Item() {
@@ -80,6 +90,46 @@ public class HeadHunterVacancyResponse implements Serializable {
             this.address = address;
         }
 
+        public String getPublished_at() {
+            return published_at;
+        }
+
+        public void setPublished_at(String published_at) {
+            this.published_at = published_at;
+        }
+
+        public WorkFormat[] getWork_format() {
+            return work_format;
+        }
+
+        public void setWork_format(WorkFormat[] work_format) {
+            this.work_format = work_format;
+        }
+
+        public Experience getExperience() {
+            return experience;
+        }
+
+        public void setExperience(Experience experience) {
+            this.experience = experience;
+        }
+
+        public EmploymentForm getEmployment_form() {
+            return employment_form;
+        }
+
+        public void setEmployment_form(EmploymentForm employment_form) {
+            this.employment_form = employment_form;
+        }
+
+        public boolean isInternship() {
+            return internship;
+        }
+
+        public void setInternship(boolean internship) {
+            this.internship = internship;
+        }
+
         @Override
         public String toString() {
             return "Item{" +
@@ -87,6 +137,11 @@ public class HeadHunterVacancyResponse implements Serializable {
                     ", area=" + area +
                     ", salary=" + salary +
                     ", address=" + address +
+                    ", published_at='" + published_at + '\'' +
+                    ", work_format=" + Arrays.toString(work_format) +
+                    ", experience=" + experience +
+                    ", employment_form=" + employment_form +
+                    ", internship=" + internship +
                     '}';
         }
     }
@@ -183,11 +238,13 @@ public class HeadHunterVacancyResponse implements Serializable {
         private String city;
         private String street;
         private String building;
+        private Metro metro;
 
-        public Address(String city, String street, String building) {
+        public Address(String city, String street, String building, Metro metro) {
             this.city = city;
             this.street = street;
             this.building = building;
+            this.metro = metro;
         }
 
         public Address() {
@@ -217,12 +274,141 @@ public class HeadHunterVacancyResponse implements Serializable {
             this.building = building;
         }
 
+        public Metro getMetro() {
+            return metro;
+        }
+
+        public void setMetro(Metro metro) {
+            this.metro = metro;
+        }
+
         @Override
         public String toString() {
             return "Address{" +
                     "city='" + city + '\'' +
                     ", street='" + street + '\'' +
                     ", building='" + building + '\'' +
+                    ", metro=" + metro +
+                    '}';
+        }
+
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        public static class Metro {
+            private String station_name;
+            private String line_name;
+
+            public Metro(String station_name, String line_name) {
+                this.station_name = station_name;
+                this.line_name = line_name;
+            }
+
+            public Metro() {
+            }
+
+            public String getStation_name() {
+                return station_name;
+            }
+
+            public void setStation_name(String station_name) {
+                this.station_name = station_name;
+            }
+
+            public String getLine_name() {
+                return line_name;
+            }
+
+            public void setLine_name(String line_name) {
+                this.line_name = line_name;
+            }
+
+            @Override
+            public String toString() {
+                return "Metro{" +
+                        "station_name='" + station_name + '\'' +
+                        ", line_name='" + line_name + '\'' +
+                        '}';
+            }
+        }
+
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class WorkFormat {
+        private String name;
+
+        public WorkFormat(String name) {
+            this.name = name;
+        }
+
+        public WorkFormat() {
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return "WorkFormat{" +
+                    "name='" + name + '\'' +
+                    '}';
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Experience {
+        private String name;
+
+        public Experience(String name) {
+            this.name = name;
+        }
+
+        public Experience() {
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return "Experience{" +
+                    "name='" + name + '\'' +
+                    '}';
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class EmploymentForm {
+        private String name;
+
+        public EmploymentForm(String name) {
+            this.name = name;
+        }
+
+        public EmploymentForm() {
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return "EmploymentForm{" +
+                    "name='" + name + '\'' +
                     '}';
         }
     }
