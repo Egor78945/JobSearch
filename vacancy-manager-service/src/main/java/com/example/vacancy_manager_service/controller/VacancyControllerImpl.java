@@ -1,6 +1,7 @@
 package com.example.vacancy_manager_service.controller;
 
 import com.example.vacancy_manager_service.configuration.HeadHunterEnvironment;
+import com.example.vacancy_manager_service.controller.advice.handler.CommonControllerExceptionHandler;
 import com.example.vacancy_manager_service.model.HeadHunterAuthorizationResponse;
 import com.example.vacancy_manager_service.model.HeadHunterVacancyResponse;
 import com.example.vacancy_manager_service.service.ReactiveVacancyService;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/vacancy")
+@CommonControllerExceptionHandler
 public class VacancyControllerImpl implements ReactiveVacancyController<HeadHunterVacancyResponse> {
     private final ReactiveVacancyService<HeadHunterVacancyResponse> vacancyService;
     private final HeadHunterEnvironment headHunterEnvironment;
