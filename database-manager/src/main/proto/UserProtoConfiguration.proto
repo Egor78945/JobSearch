@@ -14,6 +14,15 @@ message UserRegistrationMessage {
   repeated int64 usersRolesMessage = 2;
 }
 
+message VacancyMessage {
+  string userUuid = 1;
+  string vacancyUri = 2;
+}
+
+message VacancyListMessage {
+  repeated VacancyMessage vacancyList = 1;
+}
+
 message LongStringMessage {
   int64 long = 1;
   string string = 2;
@@ -39,4 +48,9 @@ service UserProtoService {
   rpc findById(LongMessage) returns (UserMessage);
   rpc findByUuid(StringMessage) returns (UserMessage);
   rpc findByEmail(StringMessage) returns (UserMessage);
+}
+
+service VacancyProtoService {
+  rpc saveVacancy(VacancyMessage) returns (EmptyMessage);
+  rpc getAllByUserUuid(StringMessage) returns (VacancyListMessage);
 }
