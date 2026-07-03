@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import redis.starter.service.HashCacheService;
 
 import java.util.Map;
 
@@ -24,17 +25,24 @@ import java.util.Map;
 @ServiceExceptionHandler
 @AuthenticationExceptionHandler
 public class AuthenticationControllerImpl implements AuthenticationController<UserModel, UserModel> {
+    final HashCacheService<String, String, Object> hashCacheService;
     protected final RegistrationService<UserModel, Mono<UserRegistrationResponse>> registrationService;
     protected final TokenManager<UserModel, String, Mono<TokenResponse>> tokenManager;
 
-    public AuthenticationControllerImpl(RegistrationService<UserModel, Mono<UserRegistrationResponse>> registrationService, TokenManager<UserModel, String, Mono<TokenResponse>> tokenManager) {
+    public AuthenticationControllerImpl(HashCacheService<String, String, Object> hashCacheService, RegistrationService<UserModel, Mono<UserRegistrationResponse>> registrationService, TokenManager<UserModel, String, Mono<TokenResponse>> tokenManager) {
+        this.hashCacheService = hashCacheService;
         this.registrationService = registrationService;
         this.tokenManager = tokenManager;
     }
 
     @Override
     @PostMapping("/register")
-    public Mono<UserRegistrationResponse> register(@Valid @RequestBody UserModel registerModel) {
+    public Mono<UserRegistrationResponse> register(@Valid @RequestBody UserModel registerModel){
+        System.out.println("before");
+        hashCacheService.put("vacancy", "123", "hello");
+        System.out.println("between");
+        System.out.println(hashCacheService.get("vacancy", "123"));
+        System.out.println("after");
         return registrationService.register(registerModel);
     }
 

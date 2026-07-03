@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: redis-starter
+  main:
+    allow-bean-definition-overriding: true

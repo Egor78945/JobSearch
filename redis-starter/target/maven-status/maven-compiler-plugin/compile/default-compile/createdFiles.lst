@@ -1,0 +1,5 @@
+redis\starter\service\RedisHashService.class
+redis\starter\service\HashCacheService.class
+redis\starter\configuration\RedisConfiguration.class
+redis\starter\configuration\environment\RedisEnvironment.class
+redis\starter\service\RedisHashServiceImpl.class
