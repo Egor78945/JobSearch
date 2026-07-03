@@ -124,3 +124,15 @@ services:
       - .env
     ports:
       - ${NGINX_PORT_OUTER}:${NGINX_PORT_INNER}
+
+  redis:
+    image: redis:${REDIS_VERSION}
+    container_name: ${REDIS_HOST}
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_MAXMEMORY=${REDIS_MAX_MEMORY}
+      - REDIS_APPENDONLY=yes
+      - REDIS_PROTECTED_MODE=no
+    restart: no
+    ports:
+      - ${REDIS_PORT_OUTER}:${REDIS_PORT_INNER}
