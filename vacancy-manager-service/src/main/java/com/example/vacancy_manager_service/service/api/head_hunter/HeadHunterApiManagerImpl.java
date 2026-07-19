@@ -1,9 +1,9 @@
-package com.example.vacancy_manager_service.service.api;
+package com.example.vacancy_manager_service.service.api.head_hunter;
 
 import com.example.vacancy_manager_service.configuration.HeadHunterEnvironment;
 import com.example.vacancy_manager_service.enumeration.HeadHunterVacancyParameter;
-import com.example.vacancy_manager_service.model.HeadHunterAuthorizationResponse;
-import com.example.vacancy_manager_service.model.HeadHunterVacancyResponse;
+import com.example.vacancy_manager_service.model.web.head_hunter.HeadHunterAuthorizationResponse;
+import com.example.vacancy_manager_service.model.web.head_hunter.HeadHunterVacancyResponse;
 import com.example.vacancy_manager_service.service.util.RequestEntityBuilder;
 import com.example.vacancy_manager_service.service.web.WebClientService;
 import org.springframework.http.HttpHeaders;

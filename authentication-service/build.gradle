@@ -29,7 +29,6 @@ dependencies {
     implementation "javax.annotation:javax.annotation-api:$javaxAnnotationApiVersion"
     implementation "org.keycloak:keycloak-admin-client:$keycloakAdminClientVersion"
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.example:redis-starter:1.0-SNAPSHOT'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

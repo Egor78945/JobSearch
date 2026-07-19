@@ -25,6 +25,7 @@ public class UriUtilities {
 
     public static Map<String, String> encodeParams(Map<String, String> params, Charset charset) {
         Map<String, String> result = new HashMap<>();
+        String encodedSpace = URLEncoder.encode(" ", charset);
 
         for (Map.Entry<String, String> entry : params.entrySet()) {
             result.put(entry.getKey(), URLEncoder.encode(entry.getValue(), charset));

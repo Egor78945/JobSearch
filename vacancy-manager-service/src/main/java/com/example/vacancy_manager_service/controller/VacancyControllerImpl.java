@@ -2,15 +2,12 @@ package com.example.vacancy_manager_service.controller;
 
 import com.example.vacancy_manager_service.configuration.HeadHunterEnvironment;
 import com.example.vacancy_manager_service.controller.advice.handler.CommonControllerExceptionHandler;
-import com.example.vacancy_manager_service.model.HeadHunterAuthorizationResponse;
-import com.example.vacancy_manager_service.model.HeadHunterVacancyResponse;
+import com.example.vacancy_manager_service.model.web.head_hunter.HeadHunterAuthorizationResponse;
+import com.example.vacancy_manager_service.model.web.head_hunter.HeadHunterVacancyResponse;
 import com.example.vacancy_manager_service.service.ReactiveVacancyService;
-import com.example.vacancy_manager_service.service.api.ReactiveHeadHunterApiManager;
+import com.example.vacancy_manager_service.service.api.head_hunter.ReactiveHeadHunterApiManager;
 import com.example.vacancy_manager_service.service.util.UriUtilities;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
@@ -38,5 +35,10 @@ public class VacancyControllerImpl implements ReactiveVacancyController<HeadHunt
     @GetMapping("/search")
     public Mono<HeadHunterVacancyResponse> findByParameters(@RequestParam Map<String, String> parameters) {
         return vacancyService.searchVacancy(UriUtilities.encodeParams(parameters, StandardCharsets.UTF_8));
+    }
+
+    @GetMapping("/search2")
+    public Mono<HeadHunterVacancyResponse> findByText(@RequestBody String text) {
+        return vacancyService.searchVacancy(text);
     }
 }

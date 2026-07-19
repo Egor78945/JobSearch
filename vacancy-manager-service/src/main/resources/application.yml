@@ -3,10 +3,11 @@ spring:
     name: vacancy-manager-service
   data:
     redis:
-      host:
-      port:
-      password:
-      lifetime:
+      password: ${REDIS_PASSWORD}
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT_INNER}
+      lifetime: 3600000
+      hash_key: ${REDIS_HASH_KEY}
 
 
 eureka:
@@ -22,6 +23,11 @@ api:
       uri: https://api.hh.ru/vacancies
     token:
       uri: https://api.hh.ru/token
+  gigachat:
+    token:
+      uri: https://ngw.devices.sberbank.ru:9443/api/v2/oauth
+    message:
+      uri: https://gigachat.devices.sberbank.ru/api/v1/chat/completions
 
 server:
   port: ${VACANCY_MANAGER_SERVICE_PORT}
