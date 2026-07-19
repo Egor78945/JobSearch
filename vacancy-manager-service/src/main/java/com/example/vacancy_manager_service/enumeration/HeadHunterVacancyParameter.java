@@ -1,5 +1,7 @@
 package com.example.vacancy_manager_service.enumeration;
 
+import com.example.vacancy_manager_service.model.web.head_hunter.HeadHunterVacancyRequest;
+
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -31,6 +33,16 @@ public enum HeadHunterVacancyParameter {
                 throw new IllegalArgumentException("unknown parameter: " + entry.getKey());
             }
         }
+        return result;
+    }
+
+    public static Map<String, String> mapFromVacancyRequest(HeadHunterVacancyRequest vacancyRequest) {
+        Map<String, String> result = new HashMap<>();
+        result.put(HeadHunterVacancyParameter.TEXT.name().toLowerCase(), vacancyRequest.getText());
+        result.put(HeadHunterVacancyParameter.AREA.name().toLowerCase(), String.valueOf(vacancyRequest.getArea()));
+        result.put(HeadHunterVacancyParameter.CURRENCY.name().toLowerCase(), vacancyRequest.getCurrency());
+        result.put(HeadHunterVacancyParameter.SALARY.name().toLowerCase(), String.valueOf(vacancyRequest.getSalary()));
+        result.put(HeadHunterVacancyParameter.PER_PAGE.name().toLowerCase(), String.valueOf(vacancyRequest.getPer_page()));
         return result;
     }
 }

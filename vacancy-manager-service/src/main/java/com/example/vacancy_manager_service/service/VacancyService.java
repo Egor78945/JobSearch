@@ -4,4 +4,5 @@ import java.util.Map;
 
 public interface VacancyService<V> {
     V searchVacancy(Map<String, String> parameters);
+    V searchVacancy(String text);
 }

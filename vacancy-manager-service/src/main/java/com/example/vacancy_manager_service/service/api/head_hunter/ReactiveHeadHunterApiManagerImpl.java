@@ -1,15 +1,15 @@
-package com.example.vacancy_manager_service.service.api;
+package com.example.vacancy_manager_service.service.api.head_hunter;
 
 import com.example.vacancy_manager_service.configuration.HeadHunterEnvironment;
-import com.example.vacancy_manager_service.enumeration.HeadHunterVacancyParameter;
-import com.example.vacancy_manager_service.model.HeadHunterAuthorizationResponse;
-import com.example.vacancy_manager_service.model.HeadHunterVacancyResponse;
+import com.example.vacancy_manager_service.model.web.head_hunter.HeadHunterAuthorizationResponse;
+import com.example.vacancy_manager_service.model.web.head_hunter.HeadHunterVacancyResponse;
 import com.example.vacancy_manager_service.service.util.RequestEntityBuilder;
 import com.example.vacancy_manager_service.service.web.ReactiveWebClientService;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 import reactor.core.publisher.Mono;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.Map;
 
@@ -18,19 +18,21 @@ public class ReactiveHeadHunterApiManagerImpl implements ReactiveHeadHunterApiMa
     protected final ReactiveWebClientService reactiveWebClientService;
     protected final RequestEntityBuilder requestEntityBuilder;
     protected final HeadHunterEnvironment headHunterEnvironment;
+    protected final JsonMapper jsonMapper;
 
-    public ReactiveHeadHunterApiManagerImpl(ReactiveWebClientService reactiveWebClientService, RequestEntityBuilder requestEntityBuilder, HeadHunterEnvironment headHunterEnvironment) {
+    public ReactiveHeadHunterApiManagerImpl(ReactiveWebClientService reactiveWebClientService, RequestEntityBuilder requestEntityBuilder, HeadHunterEnvironment headHunterEnvironment, JsonMapper jsonMapper) {
         this.reactiveWebClientService = reactiveWebClientService;
         this.requestEntityBuilder = requestEntityBuilder;
         this.headHunterEnvironment = headHunterEnvironment;
+        this.jsonMapper = jsonMapper;
     }
 
     @Override
-    public Mono<HeadHunterVacancyResponse> vacancySearch(String accessToken, Map<HeadHunterVacancyParameter, String> parameters) {
+    public Mono<HeadHunterVacancyResponse> vacancySearch(String accessToken, Map<String, String> parameters) {
         HttpHeaders headers = new HttpHeaders(MultiValueMap.fromSingleValue(Map.of(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", accessToken))));
-        RequestEntity<Void> request = requestEntityBuilder.build(HttpMethod.GET, headers, HeadHunterVacancyParameter.mapToString(parameters), headHunterEnvironment.getHEAD_HUNTER_API_VACANCIES());
-        return reactiveWebClientService.exchange(request, HeadHunterVacancyResponse.class)
-                .mapNotNull(HttpEntity::getBody)
+        RequestEntity<Void> request = requestEntityBuilder.build(HttpMethod.GET, headers, parameters, headHunterEnvironment.getHEAD_HUNTER_API_VACANCIES());
+        return reactiveWebClientService.exchange(request, String.class)
+                .map(json -> jsonMapper.readValue(json.getBody(), HeadHunterVacancyResponse.class))
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("empty response")));
     }
 

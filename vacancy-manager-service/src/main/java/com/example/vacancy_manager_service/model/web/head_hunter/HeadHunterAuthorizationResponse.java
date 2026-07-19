@@ -1,4 +1,4 @@
-package com.example.vacancy_manager_service.model;
+package com.example.vacancy_manager_service.model.web.head_hunter;
 
 public class HeadHunterAuthorizationResponse {
     private String access_token;

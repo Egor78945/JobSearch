@@ -9,7 +9,7 @@ public class WebClientException extends ServiceException {
     }
 
     public WebClientException(String text, int status, Throwable e) {
-        super(text, e);
+        super(text);
         this.status = status;
     }
 

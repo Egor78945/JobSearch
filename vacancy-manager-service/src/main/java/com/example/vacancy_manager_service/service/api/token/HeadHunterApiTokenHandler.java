@@ -1,7 +1,7 @@
 package com.example.vacancy_manager_service.service.api.token;
 
 import com.example.vacancy_manager_service.configuration.HeadHunterEnvironment;
-import com.example.vacancy_manager_service.service.api.HeadHunterApiManager;
+import com.example.vacancy_manager_service.service.api.head_hunter.HeadHunterApiManager;
 import com.example.vacancy_manager_service.service.security.EncryptionService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
