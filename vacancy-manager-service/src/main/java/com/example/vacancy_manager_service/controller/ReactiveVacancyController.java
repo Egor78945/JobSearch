@@ -2,5 +2,9 @@ package com.example.vacancy_manager_service.controller;
 
 import reactor.core.publisher.Mono;
 
-public interface ReactiveVacancyController<V> extends VacancyController<Mono<V>>{
+import java.util.Map;
+
+public interface ReactiveVacancyController<V> {
+    Mono<V[]> findByParameters(Map<String, String> parameters);
+    Mono<V[]> findByText(String text);
 }

@@ -10,26 +10,23 @@ import reactor.core.publisher.Mono;
 import tools.jackson.databind.json.JsonMapper;
 
 @Service
-public class GigachatTextMapperReactive implements ReactiveLLMTextMapper<HeadHunterVacancyRequest> {
+public class ReactiveGigachatTextMapper implements ReactiveLLMTextMapper {
     private final ReactiveGigachatApiManager reactiveGigachatApiManager;
     private final ApiTokenHandler apiTokenHandler;
-    private final TextResourceManger resourceManger;
     private final JsonMapper objectMapper;
 
-    public GigachatTextMapperReactive(ReactiveGigachatApiManager reactiveGigachatApiManager, @Qualifier("gigachatApiTokenHandler") ApiTokenHandler apiTokenHandler, TextResourceManger resourceManger, JsonMapper objectMapper) {
+    public ReactiveGigachatTextMapper(ReactiveGigachatApiManager reactiveGigachatApiManager, @Qualifier("gigachatApiTokenHandler") ApiTokenHandler apiTokenHandler, JsonMapper objectMapper) {
         this.reactiveGigachatApiManager = reactiveGigachatApiManager;
         this.apiTokenHandler = apiTokenHandler;
-        this.resourceManger = resourceManger;
         this.objectMapper = objectMapper;
     }
 
     @Override
-    public Mono<HeadHunterVacancyRequest> mapFromString(String text) {
-        String message = String.format(resourceManger.getAsString("static/prompt/gigachat_user_user_request_to_dto.txt"), text);
+    public <T> Mono<T> mapFromString(String text, Class<T> type) {
 
-        return reactiveGigachatApiManager.textMessage(apiTokenHandler.getAccessToken(), message)
+        return reactiveGigachatApiManager.textMessage(apiTokenHandler.getAccessToken(), text)
                 .mapNotNull(r -> r.getChoices()[0].getMessage().getContent())
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("empty response")))
-                .map(json -> objectMapper.readValue(json, HeadHunterVacancyRequest.class));
+                .map(json -> objectMapper.readValue(json, type));
     }
 }
