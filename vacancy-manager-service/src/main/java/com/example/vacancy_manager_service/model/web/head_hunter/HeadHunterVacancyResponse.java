@@ -42,18 +42,20 @@ public class HeadHunterVacancyResponse implements Serializable {
         private Experience experience;
         private EmploymentForm employment_form;
         private boolean internship;
+        private String url;
 
-        public Item(String name, Area area, Salary salary, Address address, String published_at, WorkFormat[] work_format, Experience experience, EmploymentForm employment_form, boolean internship) {
-            this.name = name;
-            this.area = area;
-            this.salary = salary;
-            this.address = address;
-            this.published_at = published_at;
-            this.work_format = work_format;
-            this.experience = experience;
-            this.employment_form = employment_form;
-            this.internship = internship;
-        }
+//        public Item(String name, Area area, Salary salary, Address address, String published_at, WorkFormat[] work_format, Experience experience, EmploymentForm employment_form, boolean internship, String alternate_url) {
+//            this.name = name;
+//            this.area = area;
+//            this.salary = salary;
+//            this.address = address;
+//            this.published_at = published_at;
+//            this.work_format = work_format;
+//            this.experience = experience;
+//            this.employment_form = employment_form;
+//            this.internship = internship;
+//            this.url = alternate_url;
+//        }
 
         public Item() {
         }
@@ -130,6 +132,14 @@ public class HeadHunterVacancyResponse implements Serializable {
             this.internship = internship;
         }
 
+        public String getUrl() {
+            return url;
+        }
+
+        public void setAlternate_url(String alternate_url) {
+            this.url = alternate_url;
+        }
+
         @Override
         public String toString() {
             return "Item{" +
@@ -142,9 +152,9 @@ public class HeadHunterVacancyResponse implements Serializable {
                     ", experience=" + experience +
                     ", employment_form=" + employment_form +
                     ", internship=" + internship +
+                    ", url='" + url + '\'' +
                     '}';
         }
-
 
         @JsonIgnoreProperties(ignoreUnknown = true)
         public static class Area {
